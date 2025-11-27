@@ -117,15 +117,40 @@
                 </div>
             </div>
 
+            <!-- AREA TAMPILAN DATA (BARU) -->
+        <div class="space-y-6 pb-12 mt-6">
+            
+            <!-- A. TAMPILAN DEFAULT (Barang Terakhir) -->
+            <div id="view-default" class="animate-fade-in">
+                <div class="flex items-center gap-2 mb-4 px-1">
+                    <div class="bg-indigo-100 text-primary p-2 rounded-lg">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h2 class="font-bold text-slate-700 text-lg">Barang Terakhir Masuk</h2>
+                </div>
+                
+                <!-- LIST TERBARU MUNCUL DISINI -->
+                <div id="recentListContainer" class="grid gap-4"></div>
+                
+                <div class="text-center mt-6">
+                    <button onclick="switchTab('cabinets')" class="text-slate-500 hover:text-primary text-sm font-semibold">
+                        Lihat semua di Menu Lemari <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
             <!-- B. TAMPILAN HASIL PENCARIAN (Awalnya Hidden) -->
             <div id="view-search-results" class="hidden">
                 <div class="flex items-center justify-between px-1 mb-4">
                     <h2 class="font-bold text-slate-700 text-lg">Hasil Pencarian</h2>
                     <span id="resultCount" class="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0 Ditemukan</span>
                 </div>
-                <!-- Wadah List Pencarian -->
+                
+                <!-- LIST PENCARIAN MUNCUL DISINI -->
                 <div id="searchListContainer" class="grid gap-4"></div>
             </div>
+
+        </div>
 
         </div>
 
@@ -315,9 +340,15 @@
                 updateDashboard();
                 // SEBELUMNYA: renderSearchList(inventoryData); 
                 // GANTI JADI INI:
-                renderRecentList(inventoryData); // Render barang terbaru saja
-                document.getElementById('view-default').classList.remove('hidden');
-                document.getElementById('view-search-results').classList.add('hidden');                renderCabinetGrid();
+               if(document.getElementById('recentListContainer')) {
+                    renderRecentList(inventoryData);
+                    document.getElementById('view-default').classList.remove('hidden');
+                    if(document.getElementById('view-search-results')) {
+                        document.getElementById('view-search-results').classList.add('hidden');
+                    }
+                } else {
+                    renderSearchList(inventoryData);
+                }
                 
             } catch (error) {
                 console.error(error);
@@ -326,6 +357,24 @@
                 loader.classList.add('hidden');
                 icon.classList.remove('fa-spin');
             }
+        }
+
+        // Fungsi untuk menampilkan barang terbaru (Masukin di bawah function createCard)
+        function renderRecentList(data) {
+            const container = document.getElementById('recentListContainer');
+            if(!container) return; // Cek biar gak error
+            
+            container.innerHTML = '';
+            // Ambil 5 barang terakhir
+            const recentItems = data.slice(-5).reverse(); 
+
+            if (recentItems.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50"><p>Belum ada data barang.</p></div>`;
+                return;
+            }
+            recentItems.forEach(item => {
+                container.innerHTML += createCard(item);
+            });
         }
 
         // --- DASHBOARD LOGIC ---
@@ -734,6 +783,7 @@
     </script>
 </body>
 </html>
+
 
 
 
