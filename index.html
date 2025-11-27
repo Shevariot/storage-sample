@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Inventori Sample</title>
+    <!-- Modern Font & UI Framework -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        /* Hero Search Section */
+        .hero-section {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            padding: 60px 20px;
+            color: white;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 30px rgba(13, 110, 253, 0.2);
+        }
+        
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            height: 60px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            padding-left: 30px;
+            padding-right: 60px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0d6efd;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Card Style for Items */
+        .item-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .detail-label { font-size: 0.85rem; color: #6c757d; }
+        .detail-value { font-weight: 600; color: #212529; }
+        
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+
+        /* Responsive Table for Desktop */
+        @media (min-width: 768px) {
+            .mobile-view { display: none; }
+            .desktop-view { display: table; }
+        }
+        @media (max-width: 767px) {
+            .mobile-view { display: block; }
+            .desktop-view { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Spinner -->
+    <div id="loader" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+        <p class="mt-3 fw-bold text-primary">Memuat Data Inventori...</p>
+    </div>
+
+    <!-- 1. HEADER & SEARCH -->
+    <div class="hero-section">
+        <h2 class="mb-3 fw-bold">Gudang Sample</h2>
+        <p class="mb-4 opacity-75">Cari Style, Client, atau Nomor Sample</p>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input form-control" placeholder="Ketik kata kunci pencarian...">
+            <i class="fas fa-search search-icon" onclick="filterItems()"></i>
+        </div>
+    </div>
+
+    <!-- 2. CONTENT AREA -->
+    <div class="container mt-4" style="min-height: 60vh;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-dark">Hasil Pencarian <span id="resultCount" class="badge bg-secondary rounded-pill">0</span></h5>
+            <button class="btn btn-sm btn-outline-primary" onclick="fetchData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="table-responsive desktop-view bg-white rounded shadow-sm p-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Status</th>
+                        <th>Lokasi</th>
+                        <th>Client</th>
+                        <th>Style</th>
+                        <th>Sample No</th>
+                        <th>Size</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="desktopTableBody">
+                    <!-- Data injected here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div id="mobileList" class="mobile-view">
+            <!-- Data injected here -->
+        </div>
+    </div>
+
+    <!-- 3. MODAL EDIT STATUS -->
+    <div class="modal fade" id="statusModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Update Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="selectedRowIndex">
+                    
+                    <div class="mb-3 p-3 bg-light rounded">
+                        <small class="text-muted d-block">Barang yang dipilih:</small>
+                        <strong id="modalItemName" class="text-primary fs-5"></strong>
+                        <div id="modalItemDetail" class="small text-dark mt-1"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Status Barang</label>
+                        <select class="form-select form-select-lg" id="statusSelect" onchange="toggleBorrowerInput()">
+                            <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
+                            <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="borrowerInputDiv" style="display:none;">
+                        <label class="form-label fw-bold">Nama Peminjam</label>
+                        <input type="text" class="form-control" id="borrowerName" placeholder="Contoh: Pak Budi / Bu Siti">
+                        <div class="form-text text-danger">Wajib diisi jika barang dipinjam.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="saveStatus()">Simpan Perubahan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Untuk Alert Keren -->
+
+    <script>
+        // ==========================================
+        // KONFIGURASI PENTING
+        // ==========================================
+        // Tempel Link Web App (Exec) dari Google Script di sini:
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2NfqskzykTX38TOZ8l3O2UNxrMRFIjSxtvVPiWt_36LVy0fUaZqPa08-6IslOeXZ33g/exec";
+        // ==========================================
+
+        let inventoryData = [];
+        const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+
+        // Load data saat web dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
+
+        // Search Listener (Realtime)
+        document.getElementById('searchInput').addEventListener('keyup', filterItems);
+
+        function toggleBorrowerInput() {
+            const status = document.getElementById('statusSelect').value;
+            const div = document.getElementById('borrowerInputDiv');
+            if (status === 'Dipinjam') {
+                div.style.display = 'block';
+            } else {
+                div.style.display = 'none';
+                document.getElementById('borrowerName').value = '';
+            }
+        }
+
+        // 1. AMBIL DATA DARI GOOGLE SHEET
+        async function fetchData() {
+            document.getElementById('loader').style.display = 'flex';
+            
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await response.json();
+                inventoryData = data;
+                renderData(data);
+                document.getElementById('loader').style.display = 'none';
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire('Error', 'Gagal mengambil data. Pastikan URL Script benar.', 'error');
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        // 2. TAMPILKAN DATA KE LAYAR
+        function renderData(data) {
+            const desktopBody = document.getElementById('desktopTableBody');
+            const mobileList = document.getElementById('mobileList');
+            
+            desktopBody.innerHTML = '';
+            mobileList.innerHTML = '';
+            
+            document.getElementById('resultCount').innerText = data.length;
+
+            if(data.length === 0) {
+                mobileList.innerHTML = '<div class="text-center mt-5 text-muted">Data tidak ditemukan</div>';
+                return;
+            }
+
+            data.forEach(item => {
+                // Tentukan Warna Badge Status
+                let badgeClass = item.Status === 'Dipinjam' ? 'bg-warning text-dark' : 'bg-success';
+                let statusText = item.Status;
+                if(item.Status === 'Dipinjam' && item.Peminjam) {
+                    statusText += ` (${item.Peminjam})`;
+                }
+
+                // Render Desktop Row
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                    <td class="fw-bold text-primary">${item.Tempat}</td>
+                    <td>${item.Client}</td>
+                    <td>${item.Style}</td>
+                    <td>${item['Sample No'] || '-'}</td>
+                    <td>${item.Size}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick='openModal(${JSON.stringify(item)})'>
+                            <i class="fas fa-edit"></i> Update
+                        </button>
+                    </td>
+                `;
+                desktopBody.appendChild(tr);
+
+                // Render Mobile Card
+                const card = document.createElement('div');
+                card.className = 'item-card p-3 position-relative';
+                card.onclick = () => openModal(item); // Klik kartu buka modal
+                card.innerHTML = `
+                    <span class="status-badge ${badgeClass}">${statusText}</span>
+                    <div class="row">
+                        <div class="col-8">
+                            <h6 class="mb-1 text-primary fw-bold">${item.Style}</h6>
+                            <small class="text-muted">${item.Client} - ${item['Sample No'] || 'No Sample'}</small>
+                        </div>
+                        <div class="col-4 text-end">
+                            <h4 class="mb-0 fw-bold">${item.Tempat}</h4>
+                            <small class="text-muted">Lokasi</small>
+                        </div>
+                    </div>
+                    <hr class="my-2 opacity-10">
+                    <div class="d-flex justify-content-between">
+                        <div><span class="detail-label">Size:</span> <span class="detail-value">${item.Size}</span></div>
+                        <div><span class="detail-label">Qty:</span> <span class="detail-value">${item.Qty} ${item.Unit}</span></div>
+                    </div>
+                `;
+                mobileList.appendChild(card);
+            });
+        }
+
+        // 3. FITUR PENCARIAN
+        function filterItems() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = inventoryData.filter(item => {
+                return (
+                    (item.Style && item.Style.toString().toLowerCase().includes(keyword)) ||
+                    (item.Client && item.Client.toLowerCase().includes(keyword)) ||
+                    (item['Sample No'] && item['Sample No'].toString().toLowerCase().includes(keyword)) ||
+                    (item.Tempat && item.Tempat.toLowerCase().includes(keyword))
+                );
+            });
+            renderData(filtered);
+        }
+
+        // 4. BUKA MODAL UPDATE
+        function openModal(item) {
+            document.getElementById('selectedRowIndex').value = item.rowIndex;
+            document.getElementById('modalItemName').innerText = item.Style;
+            document.getElementById('modalItemDetail').innerText = `Client: ${item.Client} | Lokasi: ${item.Tempat}`;
+            
+            // Set current status
+            const currentStatus = item.Status === 'Dipinjam' ? 'Dipinjam' : 'Tersedia';
+            document.getElementById('statusSelect').value = currentStatus;
+            
+            if(currentStatus === 'Dipinjam') {
+                document.getElementById('borrowerName').value = item.Peminjam || '';
+            }
+            
+            toggleBorrowerInput();
+            statusModal.show();
+        }
+
+        // 5. SIMPAN DATA (KIRIM KE GOOGLE SHEET)
+        async function saveStatus() {
+            const rowIndex = document.getElementById('selectedRowIndex').value;
+            const status = document.getElementById('statusSelect').value;
+            const borrower = document.getElementById('borrowerName').value;
+
+            if (status === 'Dipinjam' && !borrower) {
+                Swal.fire('Perhatian', 'Nama peminjam wajib diisi!', 'warning');
+                return;
+            }
+
+            // Tampilan Loading di tombol
+            const btn = document.querySelector('.modal-footer .btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                // Kirim data menggunakan fetch POST (no-cors mode untuk bypass isu browser, tapi kita pakai teknik kirim String JSON)
+                // Teknik ini menggunakan "text/plain" agar tidak kena preflight CORS
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ rowIndex, status, borrower })
+                });
+
+                // Tutup Modal & Refresh
+                statusModal.hide();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Status barang telah diperbarui',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                
+                // Refresh data otomatis
+                fetchData();
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'Gagal menyimpan data', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
