@@ -100,44 +100,29 @@
             
             <!-- A. TAMPILAN DEFAULT (Barang Terakhir) -->
             <div id="view-default" class="animate-fade-in">
-                <div class="flex items-center gap-2 mb-4 px-1">
+                
+                <!-- 1. Header Judul (Rapi Kiri) -->
+                <div class="flex items-center gap-2 mb-6 px-1">
                     <div class="bg-indigo-100 text-primary p-2 rounded-lg">
                         <i class="fas fa-history"></i>
                     </div>
                     <h2 class="font-bold text-slate-700 text-lg">Barang Terakhir Masuk</h2>
                 </div>
-                <!-- Wadah List Terbaru -->
+                
+                <!-- 2. Wadah List Barang (Otomatis terisi) -->
                 <div id="recentListContainer" class="grid gap-4"></div>
                 
-                <!-- Tombol Lihat Semua (Opsional, arahkan ke Tab Lemari) -->
-                <div class="text-center mt-6">
-                    <button onclick="switchTab('cabinets')" class="text-slate-500 hover:text-primary text-sm font-semibold">
-                        Lihat semua di Menu Lemari <i class="fas fa-arrow-right ml-1"></i>
+                <!-- 3. Tombol Lihat Semua (Hanya Satu di Bawah) -->
+                <div class="text-center mt-8 pt-4 border-t border-slate-100">
+                    <button onclick="switchTab('cabinets')" class="inline-flex items-center gap-2 text-slate-500 hover:text-primary text-sm font-bold transition-colors px-4 py-2 rounded-lg hover:bg-slate-50">
+                        Lihat semua di Menu Lemari <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
+
             </div>
 
             <!-- AREA TAMPILAN DATA (BARU) -->
         <div class="space-y-6 pb-12 mt-6">
-            
-            <!-- A. TAMPILAN DEFAULT (Barang Terakhir) -->
-            <div id="view-default" class="animate-fade-in">
-                <div class="flex items-center gap-2 mb-4 px-1">
-                    <div class="bg-indigo-100 text-primary p-2 rounded-lg">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <h2 class="font-bold text-slate-700 text-lg">Barang Terakhir Masuk</h2>
-                </div>
-                
-                <!-- LIST TERBARU MUNCUL DISINI -->
-                <div id="recentListContainer" class="grid gap-4"></div>
-                
-                <div class="text-center mt-6">
-                    <button onclick="switchTab('cabinets')" class="text-slate-500 hover:text-primary text-sm font-semibold">
-                        Lihat semua di Menu Lemari <i class="fas fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
-            </div>
 
             <!-- B. TAMPILAN HASIL PENCARIAN (Awalnya Hidden) -->
             <div id="view-search-results" class="hidden">
@@ -783,6 +768,7 @@
     </script>
 </body>
 </html>
+
 
 
 
