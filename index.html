@@ -95,25 +95,39 @@
             </div>
         </div>
 
-        <!-- VIEW: SEARCH RESULTS -->
-        <div id="view-search" class="space-y-4 pb-12">
-            <div class="flex items-center justify-between px-1">
-                <h2 class="font-bold text-slate-700">Hasil Pencarian</h2>
-                <span id="resultCount" class="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0 Item</span>
+        <!-- VIEW: LIST AREA -->
+        <div class="space-y-6 pb-12">
+            
+            <!-- A. TAMPILAN DEFAULT (Barang Terakhir) -->
+            <div id="view-default" class="animate-fade-in">
+                <div class="flex items-center gap-2 mb-4 px-1">
+                    <div class="bg-indigo-100 text-primary p-2 rounded-lg">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h2 class="font-bold text-slate-700 text-lg">Barang Terakhir Masuk</h2>
+                </div>
+                <!-- Wadah List Terbaru -->
+                <div id="recentListContainer" class="grid gap-4"></div>
+                
+                <!-- Tombol Lihat Semua (Opsional, arahkan ke Tab Lemari) -->
+                <div class="text-center mt-6">
+                    <button onclick="switchTab('cabinets')" class="text-slate-500 hover:text-primary text-sm font-semibold">
+                        Lihat semua di Menu Lemari <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
             </div>
-            <div id="searchListContainer" class="grid gap-4"></div>
-        </div>
 
-        <!-- VIEW: CABINETS -->
-        <div id="view-cabinets" class="hidden pb-12">
-            <div id="cabinetGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
-            <div id="cabinetDetailArea" class="hidden">
-                <button onclick="closeCabinetDetail()" class="mb-4 text-slate-500 hover:text-primary font-bold flex items-center gap-2"><i class="fas fa-arrow-left"></i> Kembali ke Rak</button>
-                <h2 class="text-xl font-bold mb-4">Isi Lemari <span id="selectedCabinetName" class="text-primary"></span></h2>
-                <div id="cabinetListContainer" class="grid gap-4"></div>
+            <!-- B. TAMPILAN HASIL PENCARIAN (Awalnya Hidden) -->
+            <div id="view-search-results" class="hidden">
+                <div class="flex items-center justify-between px-1 mb-4">
+                    <h2 class="font-bold text-slate-700 text-lg">Hasil Pencarian</h2>
+                    <span id="resultCount" class="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0 Ditemukan</span>
+                </div>
+                <!-- Wadah List Pencarian -->
+                <div id="searchListContainer" class="grid gap-4"></div>
             </div>
+
         </div>
-    </main>
 
     <!-- LOADING -->
     <div id="loader" class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
@@ -678,4 +692,5 @@
     </script>
 </body>
 </html>
+
 
