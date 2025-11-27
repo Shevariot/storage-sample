@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gudang Sample</title>
-    <!-- Favicon: Baju -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👕</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -95,13 +95,11 @@
             </div>
         </div>
 
-        <!-- VIEW: LIST AREA -->
-        <div class="space-y-6 pb-12">
+        <!-- 3. AREA TAMPILAN DATA -->
+        <div class="space-y-6 pb-12 mt-6">
             
             <!-- A. TAMPILAN DEFAULT (Barang Terakhir) -->
             <div id="view-default" class="animate-fade-in">
-                
-                <!-- 1. Header Judul (Rapi Kiri) -->
                 <div class="flex items-center gap-2 mb-6 px-1">
                     <div class="bg-indigo-100 text-primary p-2 rounded-lg">
                         <i class="fas fa-history"></i>
@@ -109,20 +107,14 @@
                     <h2 class="font-bold text-slate-700 text-lg">Barang Terakhir Masuk</h2>
                 </div>
                 
-                <!-- 2. Wadah List Barang (Otomatis terisi) -->
                 <div id="recentListContainer" class="grid gap-4"></div>
                 
-                <!-- 3. Tombol Lihat Semua (Hanya Satu di Bawah) -->
                 <div class="text-center mt-8 pt-4 border-t border-slate-100">
                     <button onclick="switchTab('cabinets')" class="inline-flex items-center gap-2 text-slate-500 hover:text-primary text-sm font-bold transition-colors px-4 py-2 rounded-lg hover:bg-slate-50">
                         Lihat semua di Menu Lemari <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
-
             </div>
-
-            <!-- AREA TAMPILAN DATA (BARU) -->
-        <div class="space-y-6 pb-12 mt-6">
 
             <!-- B. TAMPILAN HASIL PENCARIAN (Awalnya Hidden) -->
             <div id="view-search-results" class="hidden">
@@ -130,14 +122,36 @@
                     <h2 class="font-bold text-slate-700 text-lg">Hasil Pencarian</h2>
                     <span id="resultCount" class="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0 Ditemukan</span>
                 </div>
-                
-                <!-- LIST PENCARIAN MUNCUL DISINI -->
                 <div id="searchListContainer" class="grid gap-4"></div>
             </div>
 
-        </div>
+            <!-- C. TAMPILAN LEMARI (YANG HILANG TADI SAYA KEMBALIKAN) -->
+            <div id="view-cabinets" class="hidden">
+                <div class="flex items-center gap-2 mb-6 px-1">
+                    <div class="bg-indigo-100 text-primary p-2 rounded-lg">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h2 class="font-bold text-slate-700 text-lg">Pilih Lokasi Penyimpanan</h2>
+                </div>
+
+                <div id="cabinetGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
+
+                <div id="cabinetDetailArea" class="hidden">
+                    <button onclick="closeCabinetDetail()" class="mb-6 text-slate-500 hover:text-primary font-bold flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Rak
+                    </button>
+                    <div class="flex items-center gap-2 mb-4 px-1">
+                        <div class="bg-slate-800 text-white p-2 rounded-lg">
+                            <span class="font-bold text-lg" id="selectedCabinetName">-</span>
+                        </div>
+                        <h2 class="font-bold text-slate-700 text-lg">Daftar Barang</h2>
+                    </div>
+                    <div id="cabinetListContainer" class="grid gap-4"></div>
+                </div>
+            </div>
 
         </div>
+    </main>
 
     <!-- LOADING -->
     <div id="loader" class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
@@ -148,8 +162,7 @@
     <!-- MODAL DETAIL / UPDATE STATUS -->
     <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg transform transition-all scale-100 overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <!-- Modal Header -->
+            <!-- Header Modal -->
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
                 <h3 class="text-lg font-bold text-slate-800">Detail Barang</h3>
                 <div class="flex gap-2">
@@ -160,7 +173,6 @@
             </div>
 
             <div class="p-6 overflow-y-auto custom-scrollbar">
-                
                 <!-- Info Utama -->
                 <div class="flex justify-between items-start mb-6">
                     <div>
@@ -181,14 +193,11 @@
 
                 <!-- CONTENT: INFO & STATUS -->
                 <div id="mview-info" class="space-y-6">
-                    <!-- Grid Detail -->
                     <div class="grid grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                         <div><p class="text-[10px] uppercase font-bold text-slate-400">Size</p><p id="modalSize" class="font-bold text-slate-700 text-lg">-</p></div>
                         <div><p class="text-[10px] uppercase font-bold text-slate-400">Qty</p><p id="modalQty" class="font-bold text-slate-700 text-lg">-</p></div>
                         <div><p class="text-[10px] uppercase font-bold text-slate-400">Tgl Masuk</p><p id="modalDate" class="font-bold text-slate-700 text-sm mt-1">-</p></div>
                     </div>
-
-                    <!-- Update Status Section -->
                     <div class="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
                         <label class="block text-xs font-bold text-indigo-900 uppercase mb-3">Update Status Ketersediaan</label>
                         <div class="space-y-3">
@@ -196,23 +205,17 @@
                                 <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
                                 <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
                             </select>
-                            
                             <div id="borrowerInputDiv" class="hidden">
                                 <input type="text" id="borrowerName" class="w-full rounded-xl border-slate-200 p-3 font-medium focus:ring-2 focus:ring-primary" placeholder="Tulis Nama Peminjam...">
                             </div>
-
-                            <button onclick="saveStatus()" id="btnSave" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-indigo-800 transition shadow-lg shadow-indigo-500/20">
-                                Simpan Perubahan Status
-                            </button>
+                            <button onclick="saveStatus()" id="btnSave" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-indigo-800 transition shadow-lg shadow-indigo-500/20">Simpan Perubahan Status</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- CONTENT: HISTORY LOGS -->
                 <div id="mview-history" class="hidden">
-                    <div id="logContainer" class="space-y-4 relative pl-4 border-l-2 border-slate-200 ml-2">
-                        <!-- Logs injected here -->
-                    </div>
+                    <div id="logContainer" class="space-y-4 relative pl-4 border-l-2 border-slate-200 ml-2"></div>
                 </div>
             </div>
         </div>
@@ -226,8 +229,7 @@
                 <button onclick="closeFormModal()" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="itemForm" onsubmit="submitItemForm(event)" class="space-y-4">
-                <input type="hidden" id="editRowIndex"> <!-- Hidden Index for Edit -->
-                
+                <input type="hidden" id="editRowIndex">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Style Barang <span class="text-red-500">*</span></label>
@@ -287,13 +289,13 @@
         let inventoryData = [];
         let logsData = [];
         let allCabinets = [];
-        let currentItem = null; // Menyimpan data barang yang sedang dibuka di modal
+        let currentItem = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchData();
         });
 
-        // --- FETCH DATA (DATA + LOGS) ---
+        // --- FETCH DATA ---
         async function fetchData() {
             const loader = document.getElementById('loader');
             const icon = document.getElementById('refreshIcon');
@@ -305,8 +307,19 @@
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const json = await response.json();
                 
+                // Normalisasi Data (Anti-Crash)
+                let rawInventory = [];
+                let rawLogs = [];
+
+                if (Array.isArray(json)) {
+                    rawInventory = json;
+                } else if (json.inventory) {
+                    rawInventory = json.inventory;
+                    rawLogs = json.logs || [];
+                }
+
                 // Process Inventory
-                inventoryData = json.inventory.map(item => {
+                inventoryData = rawInventory.map(item => {
                     const norm = {};
                     for (let key in item) { norm[key.toUpperCase().trim()] = item[key]; }
                     norm['originalIndex'] = item.rowIndex;
@@ -314,7 +327,7 @@
                 });
 
                 // Process Logs
-                logsData = json.logs.map(log => {
+                logsData = rawLogs.map(log => {
                      const norm = {};
                      for (let key in log) { norm[key.toUpperCase().trim()] = log[key]; }
                      return norm;
@@ -323,51 +336,157 @@
                 allCabinets = [...new Set(inventoryData.map(i => i['TEMPAT']))].filter(c => c).sort();
                 
                 updateDashboard();
-                // SEBELUMNYA: renderSearchList(inventoryData); 
-                // GANTI JADI INI:
-               if(document.getElementById('recentListContainer')) {
+                renderCabinetGrid(); // Siapkan grid lemari
+
+                // Logic Render Default
+                if(document.getElementById('recentListContainer')) {
                     renderRecentList(inventoryData);
                     document.getElementById('view-default').classList.remove('hidden');
-                    if(document.getElementById('view-search-results')) {
-                        document.getElementById('view-search-results').classList.add('hidden');
-                    }
+                    document.getElementById('view-search-results').classList.add('hidden');
+                    document.getElementById('view-cabinets').classList.add('hidden');
                 } else {
                     renderSearchList(inventoryData);
                 }
                 
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', 'Gagal terhubung ke database', 'error');
+                if(inventoryData.length === 0) Swal.fire('Error', 'Gagal terhubung ke database', 'error');
             } finally {
                 loader.classList.add('hidden');
                 icon.classList.remove('fa-spin');
             }
         }
 
-        // Fungsi untuk menampilkan barang terbaru (Masukin di bawah function createCard)
+        // --- CARD DESIGN (NEW) ---
+        const val = (v) => (v && v.toString().trim() !== "") ? v : "-";
+
+        function createCard(item) {
+            const status = item['STATUS'] || 'Tersedia';
+            const isBorrowed = status === 'Dipinjam';
+            const peminjam = item['PEMINJAM'] || '';
+            const statusClass = isBorrowed ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+            const icon = isBorrowed ? 'fa-user-clock' : 'fa-check-circle';
+            const statusText = isBorrowed ? `Dipinjam: ${peminjam}` : 'Tersedia';
+
+            return `
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 hover:shadow-lg hover:border-primary/30 transition cursor-pointer group relative" onclick='openModal(${JSON.stringify(item)})'>
+                <div class="absolute top-4 right-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusClass}">
+                        <i class="fas ${icon}"></i> ${statusText}
+                    </span>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-800 flex flex-col items-center justify-center text-white shadow-lg shadow-slate-300/50">
+                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">RAK</span>
+                        <span class="text-2xl font-black leading-none">${val(item['TEMPAT'])}</span>
+                    </div>
+                    <div class="flex-1 min-w-0 py-1">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-0.5 tracking-wide">${val(item['CLIENT'])}</p>
+                        <h4 class="text-3xl font-black text-slate-800 leading-none mb-2 group-hover:text-primary transition truncate">
+                            ${val(item['STYLE'])}
+                        </h4>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block bg-slate-100 text-slate-600 text-xs font-mono font-bold px-2 py-1 rounded border border-slate-200">Size: ${val(item['SIZE'])}</span>
+                            <span class="text-xs text-slate-400 border-l border-slate-300 pl-2">Qty: ${val(item['QTY'])} ${val(item['UNIT'])}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // --- RENDER FUNCTIONS ---
         function renderRecentList(data) {
             const container = document.getElementById('recentListContainer');
-            if(!container) return; // Cek biar gak error
-            
+            if(!container) return;
             container.innerHTML = '';
-            // Ambil 5 barang terakhir
             const recentItems = data.slice(-5).reverse(); 
-
             if (recentItems.length === 0) {
                 container.innerHTML = `<div class="text-center py-10 opacity-50"><p>Belum ada data barang.</p></div>`;
                 return;
             }
-            recentItems.forEach(item => {
-                container.innerHTML += createCard(item);
-            });
+            recentItems.forEach(item => container.innerHTML += createCard(item));
         }
 
-        // --- DASHBOARD LOGIC ---
+       function renderSearchList(data) {
+            const container = document.getElementById('searchListContainer');
+            if(!container) return;
+            container.innerHTML = '';
+            document.getElementById('resultCount').innerText = `${data.length} Ditemukan`;
+            if (data.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200"><i class="fas fa-search text-4xl text-slate-300 mb-3"></i><h4 class="text-slate-500 font-bold">Barang tidak ditemukan</h4></div>`;
+                return;
+            }
+            data.forEach(item => container.innerHTML += createCard(item));
+        }
+
+        // --- SEARCH & TABS LOGIC (FIXED) ---
+        function filterByStyle() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            const viewDefault = document.getElementById('view-default');
+            const viewSearch = document.getElementById('view-search-results');
+            const viewCabinets = document.getElementById('view-cabinets');
+
+            if (keyword === "") {
+                viewDefault.classList.remove('hidden');
+                viewSearch.classList.add('hidden');
+                viewCabinets.classList.add('hidden');
+                // Reset tab style visual
+                document.getElementById('tab-search').className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
+                document.getElementById('tab-cabinets').className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
+                return;
+            }
+
+            // Saat ngetik, paksa masuk mode search
+            viewDefault.classList.add('hidden');
+            viewSearch.classList.remove('hidden');
+            viewCabinets.classList.add('hidden');
+
+            const filtered = inventoryData.filter(item => {
+                const style = item['STYLE'] ? item['STYLE'].toString().toLowerCase() : "";
+                return style.includes(keyword);
+            });
+            renderSearchList(filtered);
+        }
+
+        function switchTab(tabName) {
+            const btnSearch = document.getElementById('tab-search');
+            const btnCab = document.getElementById('tab-cabinets');
+            const viewDefault = document.getElementById('view-default');
+            const viewSearch = document.getElementById('view-search-results');
+            const viewCabinets = document.getElementById('view-cabinets');
+
+            if(tabName === 'search') {
+                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
+                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
+                
+                const keyword = document.getElementById('searchInput').value;
+                if(keyword.trim() === "") {
+                    viewDefault.classList.remove('hidden');
+                    viewSearch.classList.add('hidden');
+                } else {
+                    viewDefault.classList.add('hidden');
+                    viewSearch.classList.remove('hidden');
+                }
+                viewCabinets.classList.add('hidden');
+
+            } else {
+                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
+                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
+
+                viewDefault.classList.add('hidden');
+                viewSearch.classList.add('hidden');
+                viewCabinets.classList.remove('hidden');
+                
+                if(document.getElementById('cabinetDetailArea')) document.getElementById('cabinetDetailArea').classList.add('hidden');
+                if(document.getElementById('cabinetGrid')) document.getElementById('cabinetGrid').classList.remove('hidden');
+            }
+        }
+
+        // --- DASHBOARD ---
         function updateDashboard() {
             const total = inventoryData.length;
             const borrowed = inventoryData.filter(i => i['STATUS'] === 'Dipinjam').length;
             const available = total - borrowed;
-
             animateValue("statTotal", 0, total, 1000);
             animateValue("statAvailable", 0, available, 1000);
             animateValue("statBorrowed", 0, borrowed, 1000);
@@ -375,6 +494,7 @@
 
         function animateValue(id, start, end, duration) {
             let obj = document.getElementById(id);
+            if(!obj) return;
             let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
@@ -383,125 +503,6 @@
                 if (progress < 1) window.requestAnimationFrame(step);
             };
             window.requestAnimationFrame(step);
-        }
-
-        // --- RENDER LIST ---
-        const val = (v) => (v && v.toString().trim() !== "") ? v : "-";
-
-        function createCard(item) {
-            const status = item['STATUS'] || 'Tersedia';
-            const isBorrowed = status === 'Dipinjam';
-            const peminjam = item['PEMINJAM'] || '';
-            
-            // Logika warna status
-            const statusClass = isBorrowed 
-                ? 'bg-amber-100 text-amber-700 border border-amber-200' 
-                : 'bg-emerald-100 text-emerald-700 border border-emerald-200';
-            const icon = isBorrowed ? 'fa-user-clock' : 'fa-check-circle';
-            const statusText = isBorrowed ? `Dipinjam: ${peminjam}` : 'Tersedia';
-
-            // Logika Warna Kotak Lemari (Supaya kontras)
-            // Kita pakai warna gelap (Slate-800) biar seperti "Label Rak"
-            
-            return `
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 hover:shadow-lg hover:border-primary/30 transition cursor-pointer group relative" onclick='openModal(${JSON.stringify(item)})'>
-                
-                <!-- STATUS BADGE (Pojok Kanan Atas) -->
-                <div class="absolute top-4 right-4">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusClass}">
-                        <i class="fas ${icon}"></i> ${statusText}
-                    </span>
-                </div>
-
-                <div class="flex items-center gap-5">
-                    
-                    <!-- 1. FOKUS NOMER LEMARI (Ganti Icon "7" jadi Lokasi "1A") -->
-                    <div class="w-16 h-16 rounded-2xl bg-slate-800 flex flex-col items-center justify-center text-white shadow-lg shadow-slate-300/50">
-                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">RAK</span>
-                        <span class="text-2xl font-black leading-none">${val(item['TEMPAT'])}</span>
-                    </div>
-
-                    <div class="flex-1 min-w-0 py-1">
-                        <!-- 2. CLIENT (Kecil di atas) -->
-                        <p class="text-xs text-slate-500 font-bold uppercase mb-0.5 tracking-wide">${val(item['CLIENT'])}</p>
-                        
-                        <!-- 3. NAMA STYLE (Diperbesar & Ditonjolkan) -->
-                        <h4 class="text-3xl font-black text-slate-800 leading-none mb-2 group-hover:text-primary transition truncate">
-                            ${val(item['STYLE'])}
-                        </h4>
-                        
-                        <!-- 4. INFO SIZE (Ditampilkan di bawah) -->
-                        <div class="flex items-center gap-2">
-                            <span class="inline-block bg-slate-100 text-slate-600 text-xs font-mono font-bold px-2 py-1 rounded border border-slate-200">
-                                Size: ${val(item['SIZE'])}
-                            </span>
-                            <span class="text-xs text-slate-400 border-l border-slate-300 pl-2">
-                                Qty: ${val(item['QTY'])} ${val(item['UNIT'])}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function renderRecentList(data) {
-            const container = document.getElementById('recentListContainer');
-            container.innerHTML = '';
-
-            // Ambil 6 Item TERAKHIR dari array (Asumsi data baru ada di bawah Excel)
-            // .slice(-6) mengambil 6 terakhir, .reverse() membalik urutan biar yg baru paling atas
-            const recentItems = data.slice(-6).reverse(); 
-
-            if (recentItems.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50"><p>Belum ada data barang.</p></div>`;
-                return;
-            }
-
-            recentItems.forEach(item => {
-                container.innerHTML += createCard(item);
-            });
-        }
-
-       function renderSearchList(data) {
-            const container = document.getElementById('searchListContainer');
-            container.innerHTML = '';
-            document.getElementById('resultCount').innerText = `${data.length} Ditemukan`;
-            
-            if (data.length === 0) {
-                // Tampilan Modern kalau barang tidak ketemu
-                container.innerHTML = `
-                    <div class="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                        <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
-                        <h4 class="text-slate-500 font-bold">Barang tidak ditemukan</h4>
-                        <p class="text-xs text-slate-400 mt-1">Coba kata kunci lain</p>
-                    </div>`;
-                return;
-            }
-            data.forEach(item => container.innerHTML += createCard(item));
-        }
-
-  function filterByStyle() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
-            const viewDefault = document.getElementById('view-default');
-            const viewSearch = document.getElementById('view-search-results');
-
-            // KONDISI 1: Jika kotak pencarian KOSONG
-            if (keyword === "") {
-                viewDefault.classList.remove('hidden'); // Tampilkan Terbaru
-                viewSearch.classList.add('hidden');     // Sembunyikan Hasil Cari
-                return;
-            }
-
-            // KONDISI 2: Jika user MENGETIK
-            viewDefault.classList.add('hidden');    // Sembunyikan Terbaru
-            viewSearch.classList.remove('hidden');  // Tampilkan Hasil Cari
-
-            const filtered = inventoryData.filter(item => {
-                const style = item['STYLE'] ? item['STYLE'].toString().toLowerCase() : "";
-                return style.includes(keyword);
-            });
-            
-            renderSearchList(filtered);
         }
 
         // --- CABINETS ---
@@ -532,77 +533,20 @@
             document.getElementById('cabinetGrid').classList.remove('hidden');
         }
 
-        function switchTab(tabName) {
-            // Ambil elemen tombol
-            const btnSearch = document.getElementById('tab-search');
-            const btnCab = document.getElementById('tab-cabinets');
-
-            // Ambil elemen Views (Tampilan)
-            const viewDefault = document.getElementById('view-default'); // ID Baru (Barang Terakhir)
-            const viewSearchResults = document.getElementById('view-search-results'); // ID Hasil Cari
-            const viewCabinets = document.getElementById('view-cabinets'); // ID Lemari
-
-            if(tabName === 'search') {
-                // === MASUK TAB PENCARIAN ===
-                
-                // 1. Ganti Warna Tombol
-                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
-                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-
-                // 2. Tentukan mau nampilin "Terbaru" atau "Hasil Cari"
-                const keyword = document.getElementById('searchInput').value;
-                if(keyword.trim() === "") {
-                    viewDefault.classList.remove('hidden');       // Tampilkan Barang Terakhir
-                    if(viewSearchResults) viewSearchResults.classList.add('hidden');
-                } else {
-                    viewDefault.classList.add('hidden');
-                    if(viewSearchResults) viewSearchResults.classList.remove('hidden'); // Tampilkan Hasil Cari
-                }
-
-                // 3. Sembunyikan Lemari
-                viewCabinets.classList.add('hidden');
-
-            } else {
-                // === MASUK TAB LEMARI ===
-
-                // 1. Ganti Warna Tombol
-                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
-                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-
-                // 2. SEMBUNYIKAN SEMUA TAMPILAN SEARCH (PENTING!)
-                viewDefault.classList.add('hidden');             // Sembunyikan Barang Terakhir
-                if(viewSearchResults) viewSearchResults.classList.add('hidden'); // Sembunyikan Hasil Cari
-
-                // 3. Tampilkan Lemari
-                viewCabinets.classList.remove('hidden');
-                
-                // (Opsional) Reset agar pas buka lemari, balik ke tampilan grid tombol dulu, bukan detail isi
-                if(document.getElementById('cabinetDetailArea')) {
-                    document.getElementById('cabinetDetailArea').classList.add('hidden');
-                }
-                if(document.getElementById('cabinetGrid')) {
-                    document.getElementById('cabinetGrid').classList.remove('hidden');
-                }
-            }
-        }
-
-        // --- MODAL DETAIL LOGIC ---
+        // --- MODAL & ACTIONS ---
         function openModal(item) {
-            currentItem = item; // Simpan data item yang sedang dibuka
+            currentItem = item;
             document.getElementById('modalOverlay').classList.remove('hidden');
             
-            // Isi Data Info
             document.getElementById('modalStyle').innerText = val(item['STYLE']);
             document.getElementById('modalTempat').innerText = val(item['TEMPAT']);
             document.getElementById('modalClient').innerText = val(item['CLIENT']);
             document.getElementById('modalSample').innerText = 'Sample: ' + val(item['SAMPLE NO']);
             document.getElementById('modalSize').innerText = val(item['SIZE']);
             document.getElementById('modalQty').innerText = `${val(item['QTY'])} ${val(item['UNIT'])}`;
-            
             const rawDate = val(item['DATE']);
             document.getElementById('modalDate').innerText = rawDate !== '-' ? new Date(rawDate).toLocaleDateString('id-ID') : '-';
 
-            // Set Status Inputs
             const currentStatus = item['STATUS'] || 'Tersedia';
             document.getElementById('statusSelect').value = currentStatus === 'Dipinjam' ? 'Dipinjam' : 'Tersedia';
             if(currentStatus === 'Dipinjam') {
@@ -611,11 +555,7 @@
                 document.getElementById('borrowerName').value = '';
             }
             toggleBorrowerInput();
-
-            // Render History Logs
             renderHistoryLogs(item['STYLE']);
-
-            // Reset Tab to Info
             switchModalTab('info');
         }
 
@@ -638,32 +578,19 @@
         function renderHistoryLogs(styleName) {
             const container = document.getElementById('logContainer');
             container.innerHTML = '';
-            
-            // Filter logs by Style
-            const itemLogs = logsData.filter(l => l['STYLE'] == styleName).reverse(); // Terbaru diatas
-
+            const itemLogs = logsData.filter(l => l['STYLE'] == styleName).reverse();
             if(itemLogs.length === 0) {
                 container.innerHTML = '<p class="text-sm text-slate-400 italic">Belum ada riwayat tercatat.</p>';
                 return;
             }
-
             itemLogs.forEach(log => {
                 const date = new Date(log['WAKTU']).toLocaleString('id-ID');
                 const isPinjam = log['AKSI'] === 'Dipinjam';
                 const dotColor = isPinjam ? 'bg-amber-400' : 'bg-emerald-400';
-                
-                container.innerHTML += `
-                <div class="relative pb-4">
-                    <div class="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full ${dotColor} ring-4 ring-white"></div>
-                    <p class="text-xs text-slate-400 font-mono mb-0.5">${date}</p>
-                    <p class="text-sm font-bold text-slate-800">${log['AKSI']} ${log['PEMINJAM'] ? 'oleh ' + log['PEMINJAM'] : ''}</p>
-                    <p class="text-xs text-slate-500">${log['KETERANGAN'] || ''}</p>
-                </div>
-                `;
+                container.innerHTML += `<div class="relative pb-4"><div class="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full ${dotColor} ring-4 ring-white"></div><p class="text-xs text-slate-400 font-mono mb-0.5">${date}</p><p class="text-sm font-bold text-slate-800">${log['AKSI']} ${log['PEMINJAM'] ? 'oleh ' + log['PEMINJAM'] : ''}</p><p class="text-xs text-slate-500">${log['KETERANGAN'] || ''}</p></div>`;
             });
         }
 
-        // --- ACTION: UPDATE STATUS ---
         function toggleBorrowerInput() {
             const status = document.getElementById('statusSelect').value;
             const div = document.getElementById('borrowerInputDiv');
@@ -696,7 +623,6 @@
             }
         }
 
-        // --- ACTION: DELETE ---
         async function deleteItem() {
             const result = await Swal.fire({
                 title: 'Hapus Barang?',
@@ -712,7 +638,6 @@
             if (result.isConfirmed) {
                 const rowIndex = currentItem['originalIndex'];
                 const styleName = currentItem['STYLE'];
-                
                 Swal.showLoading();
                 try {
                     await fetch(GOOGLE_SCRIPT_URL, {
@@ -728,21 +653,18 @@
             }
         }
 
-        // --- ACTION: ADD & EDIT (FORM) ---
         function openAddModal() {
             document.getElementById('formTitle').innerText = "Input Barang Baru";
             document.getElementById('itemForm').reset();
-            document.getElementById('editRowIndex').value = ""; // Kosong berarti mode ADD
+            document.getElementById('editRowIndex').value = "";
             document.getElementById('inDate').valueAsDate = new Date();
             document.getElementById('modalFormOverlay').classList.remove('hidden');
         }
 
         function editItemMode() {
-            closeModal(); // Tutup modal detail
+            closeModal();
             document.getElementById('formTitle').innerText = "Edit Detail Barang";
             document.getElementById('editRowIndex').value = currentItem['originalIndex'];
-            
-            // Isi form dengan data lama
             document.getElementById('inStyle').value = val(currentItem['STYLE']) !== '-' ? currentItem['STYLE'] : '';
             document.getElementById('inClient').value = val(currentItem['CLIENT']) !== '-' ? currentItem['CLIENT'] : '';
             document.getElementById('inTempat').value = val(currentItem['TEMPAT']) !== '-' ? currentItem['TEMPAT'] : '';
@@ -750,13 +672,10 @@
             document.getElementById('inSize').value = val(currentItem['SIZE']) !== '-' ? currentItem['SIZE'] : '';
             document.getElementById('inQty').value = val(currentItem['QTY']) !== '-' ? currentItem['QTY'] : '';
             document.getElementById('inUnit').value = val(currentItem['UNIT']) !== '-' ? currentItem['UNIT'] : 'PCS';
-            
-            // Tanggal agak tricky formatnya
             if(currentItem['DATE'] && currentItem['DATE'] !== '-') {
                 const d = new Date(currentItem['DATE']);
                 document.getElementById('inDate').value = d.toISOString().split('T')[0];
             }
-
             document.getElementById('modalFormOverlay').classList.remove('hidden');
         }
 
@@ -767,7 +686,6 @@
             const editIndex = document.getElementById('editRowIndex').value;
             const isEdit = editIndex !== "";
             const action = isEdit ? 'editItem' : 'addItem';
-
             const btn = document.getElementById('btnFormSubmit');
             btn.innerHTML = 'Memproses...'; btn.disabled = true;
 
@@ -799,13 +717,6 @@
                 btn.innerHTML = 'Simpan Data'; btn.disabled = false;
             }
         }
-
     </script>
 </body>
 </html>
-
-
-
-
-
-
