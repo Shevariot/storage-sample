@@ -3,262 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Storage - RnD Gagaclo</title>
+    <title>Gudang Sample RnD - Gagaclo</title>
+    <!-- Favicon: Baju -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👕</text></svg>">
-    <!-- Tailwind CSS -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
                 extend: {
                     colors: {
-                        primary: '#4F46E5', 
-                        secondary: '#10B981', 
-                        background: '#F3F4F6'
+                        primary: '#4338ca', // Indigo 700
+                        secondary: '#059669', // Emerald 600
+                        background: '#F8FAFC'
                     }
                 }
             }
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 4px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-background text-slate-800 min-h-screen pb-20">
 
-    <!-- Navbar -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- NAVBAR -->
+    <nav class="glass-header border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="bg-primary text-white p-2 rounded-lg">
-                        <i class="fas fa-boxes text-xl"></i>
+                    <div class="bg-primary text-white p-2 rounded-xl shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-tshirt text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg leading-tight text-slate-900 hidden sm:block">Gudang Sample RnD - Gagaclo</h1>
-                        <h1 class="font-bold text-lg leading-tight text-slate-900 block sm:hidden">Gudang</h1>
+                        <h1 class="font-bold text-lg leading-tight text-slate-900">Gudang Sample</h1>
+                        <p class="text-xs text-slate-500">R&D Management System</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <!-- Tombol Tambah Data Baru -->
-                    <button onclick="openAddModal()" class="bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/30 flex items-center gap-2">
-                        <i class="fas fa-plus"></i> <span class="hidden sm:inline">Tambah Data</span>
+                    <button onclick="openAddModal()" class="bg-primary text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-indigo-800 transition shadow-lg shadow-indigo-500/20 flex items-center gap-2">
+                        <i class="fas fa-plus"></i> <span class="hidden sm:inline">Input Barang</span>
                     </button>
-                    <button onclick="fetchData()" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition">
-                        <i class="fas fa-sync-alt"></i>
+                    <button onclick="fetchData()" class="bg-white border border-slate-200 text-slate-600 hover:text-primary hover:border-primary p-2.5 rounded-xl transition">
+                        <i class="fas fa-sync-alt" id="refreshIcon"></i>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <!-- MAIN CONTENT -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
 
-        <!-- Tabs -->
-        <div class="flex space-x-1 bg-slate-200 p-1 rounded-xl mb-6 max-w-md mx-auto">
-            <button onclick="switchTab('search')" id="tab-search" class="flex-1 py-2 text-sm font-medium rounded-lg bg-white shadow text-slate-900 transition-all">
-                <i class="fas fa-search mr-2"></i>Pencarian
-            </button>
-            <button onclick="switchTab('cabinets')" id="tab-cabinets" class="flex-1 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all">
-                <i class="fas fa-layer-group mr-2"></i>Per Lemari
-            </button>
-        </div>
-
-        <!-- VIEW 1: SEARCH -->
-        <div id="view-search" class="animate-fade-in">
-            <div class="relative max-w-2xl mx-auto mb-8">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-slate-400 text-lg"></i>
-                </div>
-                <input type="text" id="searchInput" 
-                    class="block w-full pl-12 pr-4 py-4 bg-white border-none rounded-2xl shadow-lg ring-1 ring-slate-900/5 focus:ring-2 focus:ring-primary text-lg placeholder:text-slate-400 transition" 
-                    placeholder="Cari Style..." onkeyup="filterByStyle()">
+        <!-- 1. DASHBOARD STATS -->
+        <div class="grid grid-cols-3 gap-4 mb-8 animate-slide-up">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg shadow-blue-500/20">
+                <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">Total Aset</p>
+                <h3 class="text-3xl font-bold" id="statTotal">0</h3>
+                <p class="text-xs text-blue-100 mt-1 opacity-80">Item terdaftar</p>
             </div>
-
-            <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Hasil Pencarian <span id="resultCount" class="ml-2 bg-indigo-100 text-primary text-xs font-bold px-2 py-1 rounded-full">0</span></h2>
-            <div id="searchListContainer" class="grid gap-4 md:grid-cols-1"></div>
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
+                <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Tersedia</p>
+                <h3 class="text-3xl font-bold" id="statAvailable">0</h3>
+                <p class="text-xs text-emerald-100 mt-1 opacity-80">Siap digunakan</p>
+            </div>
+            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-5 text-white shadow-lg shadow-amber-500/20">
+                <p class="text-amber-100 text-xs font-bold uppercase tracking-wider mb-1">Dipinjam</p>
+                <h3 class="text-3xl font-bold" id="statBorrowed">0</h3>
+                <p class="text-xs text-amber-100 mt-1 opacity-80">Di produksi</p>
+            </div>
         </div>
 
-        <!-- VIEW 2: CABINETS -->
-        <div id="view-cabinets" class="hidden animate-fade-in">
-            <h2 class="text-xl font-bold text-center mb-6">Pilih Lemari Penyimpanan</h2>
-            <div id="cabinetGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 mb-8"></div>
-            
+        <!-- 2. TABS & SEARCH -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
+            <div class="flex bg-slate-200 p-1 rounded-xl w-full md:w-auto">
+                <button onclick="switchTab('search')" id="tab-search" class="px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all"><i class="fas fa-search mr-2"></i>Cari</button>
+                <button onclick="switchTab('cabinets')" id="tab-cabinets" class="px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all"><i class="fas fa-th-large mr-2"></i>Lemari</button>
+            </div>
+            <div class="relative w-full md:w-96">
+                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                <input type="text" id="searchInput" class="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 font-medium" placeholder="Ketik Style..." onkeyup="filterByStyle()">
+            </div>
+        </div>
+
+        <!-- VIEW: SEARCH RESULTS -->
+        <div id="view-search" class="space-y-4 pb-12">
+            <div class="flex items-center justify-between px-1">
+                <h2 class="font-bold text-slate-700">Hasil Pencarian</h2>
+                <span id="resultCount" class="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0 Item</span>
+            </div>
+            <div id="searchListContainer" class="grid gap-4"></div>
+        </div>
+
+        <!-- VIEW: CABINETS -->
+        <div id="view-cabinets" class="hidden pb-12">
+            <div id="cabinetGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
             <div id="cabinetDetailArea" class="hidden">
-                <div class="flex items-center gap-2 mb-4">
-                    <button onclick="closeCabinetDetail()" class="text-slate-500 hover:text-slate-800"><i class="fas fa-arrow-left"></i> Kembali</button>
-                    <h3 class="text-lg font-bold">Isi Lemari: <span id="selectedCabinetName" class="text-primary"></span></h3>
-                </div>
+                <button onclick="closeCabinetDetail()" class="mb-4 text-slate-500 hover:text-primary font-bold flex items-center gap-2"><i class="fas fa-arrow-left"></i> Kembali ke Rak</button>
+                <h2 class="text-xl font-bold mb-4">Isi Lemari <span id="selectedCabinetName" class="text-primary"></span></h2>
                 <div id="cabinetListContainer" class="grid gap-4"></div>
             </div>
         </div>
     </main>
 
-    <!-- Loading Overlay -->
-    <div id="loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-3"></div>
-        <p class="text-slate-600 font-medium animate-pulse">Memuat Data...</p>
+    <!-- LOADING -->
+    <div id="loader" class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
+        <div class="w-16 h-16 border-4 border-indigo-100 border-t-primary rounded-full animate-spin mb-4"></div>
+        <p class="text-slate-600 font-bold animate-pulse">Menghubungkan Database...</p>
     </div>
 
-    <!-- MODAL 1: EDIT STATUS (Update) - TAMPILAN DETAIL -->
-    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all scale-100 p-6">
+    <!-- MODAL DETAIL / UPDATE STATUS -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg transform transition-all scale-100 overflow-hidden flex flex-col max-h-[90vh]">
             
-            <!-- Header Modal -->
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800">Update Status</h3>
-                    <p class="text-sm text-slate-500">Ubah ketersediaan barang</p>
-                </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 text-xl transition">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <input type="hidden" id="selectedRowIndex">
-            
-            <!-- INFORMASI DETAIL BARANG (Ini yang kamu minta) -->
-            <div class="bg-slate-50 p-4 rounded-xl mb-5 border border-slate-100 relative overflow-hidden">
-                <!-- Hiasan background kecil -->
-                <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-50 rounded-full"></div>
-
-                <!-- Baris 1: Style & Lokasi -->
-                <div class="flex justify-between items-start mb-4 relative z-10 border-b border-slate-200 pb-3">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Style Barang</span>
-                        <div id="modalStyle" class="text-2xl font-bold text-primary leading-tight mt-0.5"></div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Lokasi</span>
-                        <div id="modalTempat" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm inline-block"></div>
-                    </div>
-                </div>
-
-                <!-- Baris 2: Grid Detail Lengkap -->
-                <div class="grid grid-cols-2 gap-y-3 gap-x-2 text-sm relative z-10">
-                    <div>
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Client</span>
-                        <span id="modalClient" class="font-semibold text-slate-700 text-base">-</span>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Sample No</span>
-                        <span id="modalSample" class="font-semibold text-slate-700 text-base truncate">-</span>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Size</span>
-                        <span id="modalSize" class="font-semibold text-slate-700 text-base">-</span>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Qty</span>
-                        <span id="modalQty" class="font-semibold text-slate-700 text-base">-</span>
-                    </div>
-                    <div class="col-span-2 pt-2 mt-1 border-t border-slate-200">
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Tanggal Masuk</span>
-                        <span id="modalDate" class="font-semibold text-slate-700">-</span>
-                    </div>
+            <!-- Modal Header -->
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
+                <h3 class="text-lg font-bold text-slate-800">Detail Barang</h3>
+                <div class="flex gap-2">
+                    <button onclick="deleteItem()" class="text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition" title="Hapus Barang"><i class="fas fa-trash-alt"></i></button>
+                    <button onclick="editItemMode()" class="text-blue-400 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit Detail"><i class="fas fa-edit"></i></button>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition"><i class="fas fa-times text-xl"></i></button>
                 </div>
             </div>
 
-            <!-- Form Input Status -->
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Status Saat Ini</label>
-                    <div class="relative">
-                        <select id="statusSelect" onchange="toggleBorrowerInput()" class="w-full appearance-none rounded-xl border-slate-300 bg-white border p-3.5 pr-10 text-slate-700 font-medium focus:ring-2 focus:ring-primary focus:outline-none shadow-sm cursor-pointer hover:border-primary transition">
-                            <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
-                            <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                            <i class="fas fa-chevron-down text-xs"></i>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                
+                <!-- Info Utama -->
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="modalTempat" class="bg-slate-800 text-white text-xs font-bold px-2 py-0.5 rounded">1A</span>
+                            <span id="modalClient" class="text-xs font-bold text-slate-400 uppercase">CLIENT</span>
+                        </div>
+                        <h2 id="modalStyle" class="text-3xl font-bold text-primary leading-tight">7176</h2>
+                        <p id="modalSample" class="text-slate-500 font-medium text-sm mt-1">Sample No: -</p>
+                    </div>
+                </div>
+
+                <!-- Tabs Internal -->
+                <div class="flex border-b border-slate-200 mb-6">
+                    <button onclick="switchModalTab('info')" id="mtab-info" class="flex-1 pb-3 text-sm font-bold text-primary border-b-2 border-primary transition">Status & Info</button>
+                    <button onclick="switchModalTab('history')" id="mtab-history" class="flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition">Riwayat Log</button>
+                </div>
+
+                <!-- CONTENT: INFO & STATUS -->
+                <div id="mview-info" class="space-y-6">
+                    <!-- Grid Detail -->
+                    <div class="grid grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <div><p class="text-[10px] uppercase font-bold text-slate-400">Size</p><p id="modalSize" class="font-bold text-slate-700 text-lg">-</p></div>
+                        <div><p class="text-[10px] uppercase font-bold text-slate-400">Qty</p><p id="modalQty" class="font-bold text-slate-700 text-lg">-</p></div>
+                        <div><p class="text-[10px] uppercase font-bold text-slate-400">Tgl Masuk</p><p id="modalDate" class="font-bold text-slate-700 text-sm mt-1">-</p></div>
+                    </div>
+
+                    <!-- Update Status Section -->
+                    <div class="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
+                        <label class="block text-xs font-bold text-indigo-900 uppercase mb-3">Update Status Ketersediaan</label>
+                        <div class="space-y-3">
+                            <select id="statusSelect" onchange="toggleBorrowerInput()" class="w-full rounded-xl border-slate-200 p-3 font-semibold text-slate-700 focus:ring-2 focus:ring-primary">
+                                <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
+                                <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
+                            </select>
+                            
+                            <div id="borrowerInputDiv" class="hidden">
+                                <input type="text" id="borrowerName" class="w-full rounded-xl border-slate-200 p-3 font-medium focus:ring-2 focus:ring-primary" placeholder="Tulis Nama Peminjam...">
+                            </div>
+
+                            <button onclick="saveStatus()" id="btnSave" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-indigo-800 transition shadow-lg shadow-indigo-500/20">
+                                Simpan Perubahan Status
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div id="borrowerInputDiv" class="hidden animate-fade-in-down">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Peminjam <span class="text-red-500">*</span></label>
-                    <input type="text" id="borrowerName" class="w-full rounded-xl border-slate-300 border p-3.5 focus:ring-2 focus:ring-primary focus:outline-none shadow-sm" placeholder="Contoh: Pak Budi / Produksi A">
+                <!-- CONTENT: HISTORY LOGS -->
+                <div id="mview-history" class="hidden">
+                    <div id="logContainer" class="space-y-4 relative pl-4 border-l-2 border-slate-200 ml-2">
+                        <!-- Logs injected here -->
+                    </div>
                 </div>
-            </div>
-
-            <!-- Tombol Aksi -->
-            <div class="mt-8 flex gap-3">
-                <button onclick="closeModal()" class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition">Batal</button>
-                <button onclick="saveStatus()" id="btnSave" class="flex-1 py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Simpan
-                </button>
             </div>
         </div>
     </div>
-    
 
-    <!-- MODAL 2: TAMBAH ITEM (Baru) -->
-    <div id="modalAddOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all scale-100 p-6 overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="text-xl font-bold text-slate-800"><i class="fas fa-plus-circle text-primary mr-2"></i>Tambah Barang</h3>
-                <button onclick="closeAddModal()" class="text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+    <!-- MODAL INPUT/EDIT (Reusable) -->
+    <div id="modalFormOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800" id="formTitle">Input Barang Baru</h3>
+                <button onclick="closeFormModal()" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
-
-            <form id="addForm" onsubmit="submitNewItem(event)" class="space-y-4">
+            <form id="itemForm" onsubmit="submitItemForm(event)" class="space-y-4">
+                <input type="hidden" id="editRowIndex"> <!-- Hidden Index for Edit -->
+                
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Style <span class="text-red-500">*</span></label>
-                        <input type="text" id="addStyle" required class="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Contoh: 7176">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Style Barang <span class="text-red-500">*</span></label>
+                        <input type="text" id="inStyle" required class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary transition font-bold text-slate-800" placeholder="Contoh: 7176">
                     </div>
-                    
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Client</label>
-                        <input type="text" id="addClient" class="w-full rounded-lg border border-slate-300 p-2.5 focus:outline-none" placeholder="Client">
+                        <input type="text" id="inClient" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lokasi (Lemari) <span class="text-red-500">*</span></label>
-                        <input type="text" id="addTempat" required class="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="1A, 1B...">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lokasi Rak <span class="text-red-500">*</span></label>
+                        <input type="text" id="inTempat" required class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary" placeholder="1A">
                     </div>
-
-                    <div>
+                    <div class="col-span-2">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sample No</label>
-                        <input type="text" id="addSampleNo" class="w-full rounded-lg border border-slate-300 p-2.5 focus:outline-none">
+                        <input type="text" id="inSample" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tanggal</label>
-                        <input type="date" id="addDate" class="w-full rounded-lg border border-slate-300 p-2.5 focus:outline-none">
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-2 col-span-2">
+                    <div class="grid grid-cols-3 gap-3 col-span-2">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Size</label>
-                            <input type="text" id="addSize" class="w-full rounded-lg border border-slate-300 p-2.5 focus:outline-none" placeholder="S/M/L">
+                            <input type="text" id="inSize" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Qty</label>
-                            <input type="number" id="addQty" class="w-full rounded-lg border border-slate-300 p-2.5 focus:outline-none" placeholder="1">
+                            <input type="number" id="inQty" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Unit</label>
-                            <select id="addUnit" class="w-full rounded-lg border border-slate-300 p-2.5 focus:outline-none">
+                            <select id="inUnit" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
                                 <option value="PCS">PCS</option>
                                 <option value="SET">SET</option>
                             </select>
                         </div>
                     </div>
+                    <div class="col-span-2">
+                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tanggal</label>
+                         <input type="date" id="inDate" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
+                    </div>
                 </div>
-
-                <div class="pt-4 border-t flex gap-3">
-                    <button type="button" onclick="closeAddModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200">Batal</button>
-                    <button type="submit" id="btnAddSubmit" class="flex-1 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-500/30">Simpan Data</button>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeFormModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl">Batal</button>
+                    <button type="submit" id="btnFormSubmit" class="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-indigo-800 shadow-lg shadow-indigo-500/30">Simpan Data</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- LOGIC SCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // ==========================================
@@ -268,69 +261,105 @@
         // ==========================================
 
         let inventoryData = [];
+        let logsData = [];
         let allCabinets = [];
+        let currentItem = null; // Menyimpan data barang yang sedang dibuka di modal
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchData();
-            // Set default date to today
-            document.getElementById('addDate').valueAsDate = new Date();
         });
 
-        // --- CORE FUNCTIONS ---
+        // --- FETCH DATA (DATA + LOGS) ---
         async function fetchData() {
-            document.getElementById('loader').classList.remove('hidden');
+            const loader = document.getElementById('loader');
+            const icon = document.getElementById('refreshIcon');
+            
+            loader.classList.remove('hidden');
+            icon.classList.add('fa-spin');
+
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
-                const rawData = await response.json();
+                const json = await response.json();
                 
-                inventoryData = rawData.map(item => {
-                    const normalized = {};
-                    for (const key in item) {
-                        normalized[key.toUpperCase().trim()] = item[key];
-                        normalized['originalIndex'] = item.rowIndex;
-                    }
-                    return normalized;
+                // Process Inventory
+                inventoryData = json.inventory.map(item => {
+                    const norm = {};
+                    for (let key in item) { norm[key.toUpperCase().trim()] = item[key]; }
+                    norm['originalIndex'] = item.rowIndex;
+                    return norm;
+                });
+
+                // Process Logs
+                logsData = json.logs.map(log => {
+                     const norm = {};
+                     for (let key in log) { norm[key.toUpperCase().trim()] = log[key]; }
+                     return norm;
                 });
 
                 allCabinets = [...new Set(inventoryData.map(i => i['TEMPAT']))].filter(c => c).sort();
                 
+                updateDashboard();
                 renderSearchList(inventoryData);
                 renderCabinetGrid();
-                document.getElementById('loader').classList.add('hidden');
-
+                
             } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('loader').classList.add('hidden');
+                console.error(error);
+                Swal.fire('Error', 'Gagal terhubung ke database', 'error');
+            } finally {
+                loader.classList.add('hidden');
+                icon.classList.remove('fa-spin');
             }
         }
 
-        // --- RENDER FUNCTIONS (Sama seperti sebelumnya) ---
+        // --- DASHBOARD LOGIC ---
+        function updateDashboard() {
+            const total = inventoryData.length;
+            const borrowed = inventoryData.filter(i => i['STATUS'] === 'Dipinjam').length;
+            const available = total - borrowed;
+
+            animateValue("statTotal", 0, total, 1000);
+            animateValue("statAvailable", 0, available, 1000);
+            animateValue("statBorrowed", 0, borrowed, 1000);
+        }
+
+        function animateValue(id, start, end, duration) {
+            let obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // --- RENDER LIST ---
         const val = (v) => (v && v.toString().trim() !== "") ? v : "-";
 
         function createCard(item) {
             const status = item['STATUS'] || 'Tersedia';
             const isBorrowed = status === 'Dipinjam';
             const peminjam = item['PEMINJAM'] || '';
-            const statusBg = isBorrowed ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200';
+            const statusClass = isBorrowed ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
             const icon = isBorrowed ? 'fa-user-clock' : 'fa-check-circle';
+            const statusText = isBorrowed ? `Dipinjam: ${peminjam}` : 'Tersedia';
 
             return `
-            <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group relative overflow-hidden" onclick='openModal(${JSON.stringify(item)})'>
-                <div class="absolute top-4 right-4">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${statusBg}">
-                        <i class="fas ${icon}"></i> ${isBorrowed ? `Dipinjam: ${val(peminjam)}` : 'Tersedia'}
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg transition cursor-pointer group" onclick='openModal(${JSON.stringify(item)})'>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="bg-slate-800 text-white text-[10px] font-bold px-2 py-0.5 rounded">${val(item['TEMPAT'])}</span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusClass}">
+                        <i class="fas ${icon}"></i> ${statusText}
                     </span>
                 </div>
-                <div class="flex items-start gap-4">
-                    <div class="flex-shrink-0 w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-primary font-bold text-lg border border-indigo-100">${val(item['TEMPAT'])}</div>
-                    <div class="flex-1 min-w-0 pt-1">
-                        <h4 class="text-lg font-bold text-slate-800 leading-none mb-1 group-hover:text-primary transition">${val(item['STYLE'])}</h4>
-                        <p class="text-sm text-slate-500 mb-3 truncate">${val(item['CLIENT'])} &bull; Sample: ${val(item['SAMPLE NO'])}</p>
-                        <div class="grid grid-cols-3 gap-2 text-xs border-t border-slate-100 pt-3 mt-2">
-                            <div><span class="block text-slate-400 font-bold">Size</span><span class="font-semibold text-slate-700">${val(item['SIZE'])}</span></div>
-                            <div><span class="block text-slate-400 font-bold">Qty</span><span class="font-semibold text-slate-700">${val(item['QTY'])} ${val(item['UNIT'])}</span></div>
-                            <div><span class="block text-slate-400 font-bold">Date</span><span class="font-semibold text-slate-700">${val(item['DATE']).toString().substring(0,10)}</span></div>
-                        </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-primary font-bold text-lg">
+                        ${val(item['STYLE']).toString().charAt(0)}
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-800 leading-tight group-hover:text-primary transition">${val(item['STYLE'])}</h4>
+                        <p class="text-xs text-slate-500 font-bold uppercase">${val(item['CLIENT'])}</p>
                     </div>
                 </div>
             </div>`;
@@ -339,9 +368,10 @@
         function renderSearchList(data) {
             const container = document.getElementById('searchListContainer');
             container.innerHTML = '';
-            document.getElementById('resultCount').innerText = data.length;
+            document.getElementById('resultCount').innerText = `${data.length} Item`;
+            
             if (data.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300"><p class="text-slate-500">Data tidak ditemukan.</p></div>`;
+                container.innerHTML = `<div class="text-center py-10 opacity-50"><i class="fas fa-box-open text-4xl mb-2"></i><p>Tidak ada data</p></div>`;
                 return;
             }
             data.forEach(item => container.innerHTML += createCard(item));
@@ -356,13 +386,14 @@
             renderSearchList(filtered);
         }
 
+        // --- CABINETS ---
         function renderCabinetGrid() {
             const grid = document.getElementById('cabinetGrid');
             grid.innerHTML = '';
             allCabinets.forEach(loc => {
                 const btn = document.createElement('button');
-                btn.className = "p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-primary hover:text-primary hover:shadow-md transition font-bold text-lg text-slate-700 flex flex-col items-center justify-center gap-2";
-                btn.innerHTML = `<i class="fas fa-archive text-slate-300 text-2xl"></i> ${loc}`;
+                btn.className = "p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-primary hover:text-primary hover:shadow-md transition font-bold text-lg text-slate-600 flex flex-col items-center justify-center gap-1";
+                btn.innerHTML = `<i class="fas fa-archive text-slate-300 text-2xl mb-1"></i> ${loc}`;
                 btn.onclick = () => showCabinetDetail(loc);
                 grid.appendChild(btn);
             });
@@ -390,67 +421,109 @@
             const viewCab = document.getElementById('view-cabinets');
 
             if(tabName === 'search') {
-                btnSearch.className = "flex-1 py-2 text-sm font-medium rounded-lg bg-white shadow text-slate-900 transition-all";
-                btnCab.className = "flex-1 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all";
+                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
+                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
                 viewSearch.classList.remove('hidden');
                 viewCab.classList.add('hidden');
             } else {
-                btnCab.className = "flex-1 py-2 text-sm font-medium rounded-lg bg-white shadow text-slate-900 transition-all";
-                btnSearch.className = "flex-1 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all";
+                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
+                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
                 viewCab.classList.remove('hidden');
                 viewSearch.classList.add('hidden');
             }
         }
 
-        // --- MODAL LOGIC (UPDATE STATUS) ---
+        // --- MODAL DETAIL LOGIC ---
         function openModal(item) {
+            currentItem = item; // Simpan data item yang sedang dibuka
             document.getElementById('modalOverlay').classList.remove('hidden');
             
-            // Isi Data Hidden untuk Sistem
-            document.getElementById('selectedRowIndex').value = item['originalIndex'];
-            
-            // Isi Data Tampilan Detail (Lengkap)
+            // Isi Data Info
             document.getElementById('modalStyle').innerText = val(item['STYLE']);
             document.getElementById('modalTempat').innerText = val(item['TEMPAT']);
             document.getElementById('modalClient').innerText = val(item['CLIENT']);
-            document.getElementById('modalSample').innerText = val(item['SAMPLE NO']);
+            document.getElementById('modalSample').innerText = 'Sample: ' + val(item['SAMPLE NO']);
             document.getElementById('modalSize').innerText = val(item['SIZE']);
+            document.getElementById('modalQty').innerText = `${val(item['QTY'])} ${val(item['UNIT'])}`;
             
-            // Gabung Qty dan Unit (misal: 1 PCS)
-            const qty = val(item['QTY']);
-            const unit = val(item['UNIT']);
-            document.getElementById('modalQty').innerText = (qty !== '-' ? qty : '0') + ' ' + (unit !== '-' ? unit : '');
-            
-            // Format Tanggal biar cantik
             const rawDate = val(item['DATE']);
-            document.getElementById('modalDate').innerText = rawDate !== '-' ? rawDate.toString().substring(0,10) : '-';
+            document.getElementById('modalDate').innerText = rawDate !== '-' ? new Date(rawDate).toLocaleDateString('id-ID') : '-';
 
-            // Set Status & Peminjam
+            // Set Status Inputs
             const currentStatus = item['STATUS'] || 'Tersedia';
             document.getElementById('statusSelect').value = currentStatus === 'Dipinjam' ? 'Dipinjam' : 'Tersedia';
-            
             if(currentStatus === 'Dipinjam') {
                 document.getElementById('borrowerName').value = item['PEMINJAM'] || '';
             } else {
                 document.getElementById('borrowerName').value = '';
             }
             toggleBorrowerInput();
+
+            // Render History Logs
+            renderHistoryLogs(item['STYLE']);
+
+            // Reset Tab to Info
+            switchModalTab('info');
         }
-        
+
         function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
 
+        function switchModalTab(tab) {
+            if(tab === 'info') {
+                document.getElementById('mtab-info').className = "flex-1 pb-3 text-sm font-bold text-primary border-b-2 border-primary transition";
+                document.getElementById('mtab-history').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition";
+                document.getElementById('mview-info').classList.remove('hidden');
+                document.getElementById('mview-history').classList.add('hidden');
+            } else {
+                document.getElementById('mtab-history').className = "flex-1 pb-3 text-sm font-bold text-primary border-b-2 border-primary transition";
+                document.getElementById('mtab-info').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition";
+                document.getElementById('mview-history').classList.remove('hidden');
+                document.getElementById('mview-info').classList.add('hidden');
+            }
+        }
+
+        function renderHistoryLogs(styleName) {
+            const container = document.getElementById('logContainer');
+            container.innerHTML = '';
+            
+            // Filter logs by Style
+            const itemLogs = logsData.filter(l => l['STYLE'] == styleName).reverse(); // Terbaru diatas
+
+            if(itemLogs.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-400 italic">Belum ada riwayat tercatat.</p>';
+                return;
+            }
+
+            itemLogs.forEach(log => {
+                const date = new Date(log['WAKTU']).toLocaleString('id-ID');
+                const isPinjam = log['AKSI'] === 'Dipinjam';
+                const dotColor = isPinjam ? 'bg-amber-400' : 'bg-emerald-400';
+                
+                container.innerHTML += `
+                <div class="relative pb-4">
+                    <div class="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full ${dotColor} ring-4 ring-white"></div>
+                    <p class="text-xs text-slate-400 font-mono mb-0.5">${date}</p>
+                    <p class="text-sm font-bold text-slate-800">${log['AKSI']} ${log['PEMINJAM'] ? 'oleh ' + log['PEMINJAM'] : ''}</p>
+                    <p class="text-xs text-slate-500">${log['KETERANGAN'] || ''}</p>
+                </div>
+                `;
+            });
+        }
+
+        // --- ACTION: UPDATE STATUS ---
         function toggleBorrowerInput() {
             const status = document.getElementById('statusSelect').value;
             const div = document.getElementById('borrowerInputDiv');
-            if (status === 'Dipinjam') div.classList.remove('hidden');
-            else div.classList.add('hidden');
+            if (status === 'Dipinjam') div.classList.remove('hidden'); else div.classList.add('hidden');
         }
 
         async function saveStatus() {
-            const rowIndex = document.getElementById('selectedRowIndex').value;
+            const rowIndex = currentItem['originalIndex'];
             const status = document.getElementById('statusSelect').value;
             const borrower = document.getElementById('borrowerName').value;
-            if (status === 'Dipinjam' && !borrower.trim()) { Swal.fire('Error', 'Nama peminjam wajib diisi!', 'warning'); return; }
+            const styleName = currentItem['STYLE'];
+
+            if (status === 'Dipinjam' && !borrower.trim()) { Swal.fire('Oops', 'Nama peminjam wajib diisi!', 'warning'); return; }
 
             const btn = document.getElementById('btnSave');
             btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
@@ -458,47 +531,104 @@
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ rowIndex, status, borrower })
+                    body: JSON.stringify({ action: 'updateStatus', rowIndex, status, borrower, styleName })
                 });
                 closeModal();
-                Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Status diperbarui', timer: 1500, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: 'Status Diupdate', timer: 1500, showConfirmButton: false });
                 fetchData();
             } catch (error) {
                 Swal.fire('Error', 'Gagal update status', 'error');
             } finally {
-                btn.innerHTML = 'Simpan'; btn.disabled = false;
+                btn.innerHTML = 'Simpan Perubahan Status'; btn.disabled = false;
             }
         }
 
-        // --- NEW: LOGIC TAMBAH DATA ---
+        // --- ACTION: DELETE ---
+        async function deleteItem() {
+            const result = await Swal.fire({
+                title: 'Hapus Barang?',
+                text: "Data yang dihapus tidak bisa dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            });
+
+            if (result.isConfirmed) {
+                const rowIndex = currentItem['originalIndex'];
+                const styleName = currentItem['STYLE'];
+                
+                Swal.showLoading();
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'deleteItem', rowIndex, styleName })
+                    });
+                    closeModal();
+                    Swal.fire('Terhapus!', 'Barang telah dihapus.', 'success');
+                    fetchData();
+                } catch (error) {
+                    Swal.fire('Gagal', 'Terjadi kesalahan saat menghapus', 'error');
+                }
+            }
+        }
+
+        // --- ACTION: ADD & EDIT (FORM) ---
         function openAddModal() {
-            document.getElementById('addForm').reset();
-            document.getElementById('addDate').valueAsDate = new Date(); // Reset tanggal ke hari ini
-            document.getElementById('modalAddOverlay').classList.remove('hidden');
+            document.getElementById('formTitle').innerText = "Input Barang Baru";
+            document.getElementById('itemForm').reset();
+            document.getElementById('editRowIndex').value = ""; // Kosong berarti mode ADD
+            document.getElementById('inDate').valueAsDate = new Date();
+            document.getElementById('modalFormOverlay').classList.remove('hidden');
         }
 
-        function closeAddModal() {
-            document.getElementById('modalAddOverlay').classList.add('hidden');
-        }
-
-        async function submitNewItem(e) {
-            e.preventDefault(); // Mencegah reload halaman
+        function editItemMode() {
+            closeModal(); // Tutup modal detail
+            document.getElementById('formTitle').innerText = "Edit Detail Barang";
+            document.getElementById('editRowIndex').value = currentItem['originalIndex'];
             
-            const btn = document.getElementById('btnAddSubmit');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Mengirim...'; btn.disabled = true;
+            // Isi form dengan data lama
+            document.getElementById('inStyle').value = val(currentItem['STYLE']) !== '-' ? currentItem['STYLE'] : '';
+            document.getElementById('inClient').value = val(currentItem['CLIENT']) !== '-' ? currentItem['CLIENT'] : '';
+            document.getElementById('inTempat').value = val(currentItem['TEMPAT']) !== '-' ? currentItem['TEMPAT'] : '';
+            document.getElementById('inSample').value = val(currentItem['SAMPLE NO']) !== '-' ? currentItem['SAMPLE NO'] : '';
+            document.getElementById('inSize').value = val(currentItem['SIZE']) !== '-' ? currentItem['SIZE'] : '';
+            document.getElementById('inQty').value = val(currentItem['QTY']) !== '-' ? currentItem['QTY'] : '';
+            document.getElementById('inUnit').value = val(currentItem['UNIT']) !== '-' ? currentItem['UNIT'] : 'PCS';
+            
+            // Tanggal agak tricky formatnya
+            if(currentItem['DATE'] && currentItem['DATE'] !== '-') {
+                const d = new Date(currentItem['DATE']);
+                document.getElementById('inDate').value = d.toISOString().split('T')[0];
+            }
 
-            // Ambil data dari form
+            document.getElementById('modalFormOverlay').classList.remove('hidden');
+        }
+
+        function closeFormModal() { document.getElementById('modalFormOverlay').classList.add('hidden'); }
+
+        async function submitItemForm(e) {
+            e.preventDefault();
+            const editIndex = document.getElementById('editRowIndex').value;
+            const isEdit = editIndex !== "";
+            const action = isEdit ? 'editItem' : 'addItem';
+
+            const btn = document.getElementById('btnFormSubmit');
+            btn.innerHTML = 'Memproses...'; btn.disabled = true;
+
             const payload = {
-                action: 'addItem', // Tanda untuk backend
-                style: document.getElementById('addStyle').value,
-                client: document.getElementById('addClient').value,
-                tempat: document.getElementById('addTempat').value,
-                sampleNo: document.getElementById('addSampleNo').value,
-                date: document.getElementById('addDate').value,
-                size: document.getElementById('addSize').value,
-                qty: document.getElementById('addQty').value,
-                unit: document.getElementById('addUnit').value
+                action: action,
+                rowIndex: editIndex,
+                style: document.getElementById('inStyle').value,
+                client: document.getElementById('inClient').value,
+                tempat: document.getElementById('inTempat').value,
+                sampleNo: document.getElementById('inSample').value,
+                date: document.getElementById('inDate').value,
+                size: document.getElementById('inSize').value,
+                qty: document.getElementById('inQty').value,
+                unit: document.getElementById('inUnit').value
             };
 
             try {
@@ -506,29 +636,17 @@
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-
-                closeAddModal();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: 'Barang baru telah ditambahkan!',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-
-                fetchData(); // Refresh list otomatis
-
+                closeFormModal();
+                Swal.fire('Sukses', isEdit ? 'Data berhasil diperbarui' : 'Barang berhasil ditambahkan', 'success');
+                fetchData();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', 'Gagal menambah barang', 'error');
+                Swal.fire('Error', 'Gagal menyimpan data', 'error');
             } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                btn.innerHTML = 'Simpan Data'; btn.disabled = false;
             }
         }
+
     </script>
 </body>
 </html>
-
-
-
