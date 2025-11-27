@@ -533,21 +533,56 @@
         }
 
         function switchTab(tabName) {
+            // Ambil elemen tombol
             const btnSearch = document.getElementById('tab-search');
             const btnCab = document.getElementById('tab-cabinets');
-            const viewSearch = document.getElementById('view-search');
-            const viewCab = document.getElementById('view-cabinets');
+
+            // Ambil elemen Views (Tampilan)
+            const viewDefault = document.getElementById('view-default'); // ID Baru (Barang Terakhir)
+            const viewSearchResults = document.getElementById('view-search-results'); // ID Hasil Cari
+            const viewCabinets = document.getElementById('view-cabinets'); // ID Lemari
 
             if(tabName === 'search') {
+                // === MASUK TAB PENCARIAN ===
+                
+                // 1. Ganti Warna Tombol
                 btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
                 btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-                viewSearch.classList.remove('hidden');
-                viewCab.classList.add('hidden');
+
+                // 2. Tentukan mau nampilin "Terbaru" atau "Hasil Cari"
+                const keyword = document.getElementById('searchInput').value;
+                if(keyword.trim() === "") {
+                    viewDefault.classList.remove('hidden');       // Tampilkan Barang Terakhir
+                    if(viewSearchResults) viewSearchResults.classList.add('hidden');
+                } else {
+                    viewDefault.classList.add('hidden');
+                    if(viewSearchResults) viewSearchResults.classList.remove('hidden'); // Tampilkan Hasil Cari
+                }
+
+                // 3. Sembunyikan Lemari
+                viewCabinets.classList.add('hidden');
+
             } else {
+                // === MASUK TAB LEMARI ===
+
+                // 1. Ganti Warna Tombol
                 btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
                 btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-                viewCab.classList.remove('hidden');
-                viewSearch.classList.add('hidden');
+
+                // 2. SEMBUNYIKAN SEMUA TAMPILAN SEARCH (PENTING!)
+                viewDefault.classList.add('hidden');             // Sembunyikan Barang Terakhir
+                if(viewSearchResults) viewSearchResults.classList.add('hidden'); // Sembunyikan Hasil Cari
+
+                // 3. Tampilkan Lemari
+                viewCabinets.classList.remove('hidden');
+                
+                // (Opsional) Reset agar pas buka lemari, balik ke tampilan grid tombol dulu, bukan detail isi
+                if(document.getElementById('cabinetDetailArea')) {
+                    document.getElementById('cabinetDetailArea').classList.add('hidden');
+                }
+                if(document.getElementById('cabinetGrid')) {
+                    document.getElementById('cabinetGrid').classList.remove('hidden');
+                }
             }
         }
 
@@ -768,6 +803,7 @@
     </script>
 </body>
 </html>
+
 
 
 
