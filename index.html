@@ -3,381 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Inventori Sample</title>
-    <!-- Modern Font & UI Framework -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Inventory Modern</title>
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo modern
+                        secondary: '#10B981', // Emerald green
+                        danger: '#EF4444',
+                        background: '#F3F4F6'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Roboto, sans-serif; }
-        
-        /* Hero Search Section */
-        .hero-section {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-            padding: 60px 20px;
-            color: white;
-            text-align: center;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            box-shadow: 0 10px 30px rgba(13, 110, 253, 0.2);
-        }
-        
-        .search-box {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .search-input {
-            height: 60px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            padding-left: 30px;
-            padding-right: 60px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: none;
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #0d6efd;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Card Style for Items */
-        .item-card {
-            background: white;
-            border: none;
-            border-radius: 15px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .status-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 0.8rem;
-            padding: 5px 12px;
-            border-radius: 20px;
-        }
-
-        .detail-label { font-size: 0.85rem; color: #6c757d; }
-        .detail-value { font-weight: 600; color: #212529; }
-        
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column;
-        }
-
-        /* Responsive Table for Desktop */
-        @media (min-width: 768px) {
-            .mobile-view { display: none; }
-            .desktop-view { display: table; }
-        }
-        @media (max-width: 767px) {
-            .mobile-view { display: block; }
-            .desktop-view { display: none; }
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body>
+<body class="bg-background text-slate-800 min-h-screen pb-20">
 
-    <!-- Loading Spinner -->
-    <div id="loader" class="loading-overlay">
-        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-bold text-primary">Memuat Data Inventori...</p>
-    </div>
-
-    <!-- 1. HEADER & SEARCH -->
-    <div class="hero-section">
-        <h2 class="mb-3 fw-bold">Gudang Sample</h2>
-        <p class="mb-4 opacity-75">Cari Style, Client, atau Nomor Sample</p>
-        <div class="search-box">
-            <input type="text" id="searchInput" class="search-input form-control" placeholder="Ketik kata kunci pencarian...">
-            <i class="fas fa-search search-icon" onclick="filterItems()"></i>
-        </div>
-    </div>
-
-    <!-- 2. CONTENT AREA -->
-    <div class="container mt-4" style="min-height: 60vh;">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold text-dark">Hasil Pencarian <span id="resultCount" class="badge bg-secondary rounded-pill">0</span></h5>
-            <button class="btn btn-sm btn-outline-primary" onclick="fetchData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
-
-        <!-- Desktop Table View -->
-        <div class="table-responsive desktop-view bg-white rounded shadow-sm p-3">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Status</th>
-                        <th>Lokasi</th>
-                        <th>Client</th>
-                        <th>Style</th>
-                        <th>Sample No</th>
-                        <th>Size</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="desktopTableBody">
-                    <!-- Data injected here -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Mobile Card View -->
-        <div id="mobileList" class="mobile-view">
-            <!-- Data injected here -->
-        </div>
-    </div>
-
-    <!-- 3. MODAL EDIT STATUS -->
-    <div class="modal fade" id="statusModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title fw-bold" id="modalTitle">Update Status</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="selectedRowIndex">
-                    
-                    <div class="mb-3 p-3 bg-light rounded">
-                        <small class="text-muted d-block">Barang yang dipilih:</small>
-                        <strong id="modalItemName" class="text-primary fs-5"></strong>
-                        <div id="modalItemDetail" class="small text-dark mt-1"></div>
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary text-white p-2 rounded-lg">
+                        <i class="fas fa-boxes text-xl"></i>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Status Barang</label>
-                        <select class="form-select form-select-lg" id="statusSelect" onchange="toggleBorrowerInput()">
-                            <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
-                            <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3" id="borrowerInputDiv" style="display:none;">
-                        <label class="form-label fw-bold">Nama Peminjam</label>
-                        <input type="text" class="form-control" id="borrowerName" placeholder="Contoh: Pak Budi / Bu Siti">
-                        <div class="form-text text-danger">Wajib diisi jika barang dipinjam.</div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight text-slate-900">Gudang Sample</h1>
+                        <p class="text-xs text-slate-500 font-medium">Inventory System</p>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary px-4" onclick="saveStatus()">Simpan Perubahan</button>
+                <div class="flex items-center">
+                    <button onclick="fetchData()" class="text-sm font-semibold text-primary hover:bg-indigo-50 px-3 py-2 rounded transition">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+
+        <!-- Tabs Navigation -->
+        <div class="flex space-x-1 bg-slate-200 p-1 rounded-xl mb-6 max-w-md mx-auto">
+            <button onclick="switchTab('search')" id="tab-search" class="flex-1 py-2 text-sm font-medium rounded-lg bg-white shadow text-slate-900 transition-all duration-200">
+                <i class="fas fa-search mr-2"></i>Pencarian
+            </button>
+            <button onclick="switchTab('cabinets')" id="tab-cabinets" class="flex-1 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all duration-200">
+                <i class="fas fa-layer-group mr-2"></i>Per Lemari
+            </button>
+        </div>
+
+        <!-- VIEW 1: SEARCH -->
+        <div id="view-search" class="animate-fade-in">
+            <!-- Search Bar -->
+            <div class="relative max-w-2xl mx-auto mb-8">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-slate-400 text-lg"></i>
+                </div>
+                <input type="text" id="searchInput" 
+                    class="block w-full pl-12 pr-4 py-4 bg-white border-none rounded-2xl shadow-lg ring-1 ring-slate-900/5 focus:ring-2 focus:ring-primary text-lg placeholder:text-slate-400 transition" 
+                    placeholder="Cari Style (Contoh: 7176)..." onkeyup="filterByStyle()">
+            </div>
+
+            <div class="flex justify-between items-end mb-4 px-1">
+                <h2 class="text-lg font-bold text-slate-800">Hasil Pencarian <span id="resultCount" class="ml-2 bg-indigo-100 text-primary text-xs font-bold px-2 py-1 rounded-full">0</span></h2>
+            </div>
+
+            <!-- List Container -->
+            <div id="searchListContainer" class="grid gap-4 md:grid-cols-1">
+                <!-- Data inserted here via JS -->
+            </div>
+        </div>
+
+        <!-- VIEW 2: CABINETS -->
+        <div id="view-cabinets" class="hidden animate-fade-in">
+            <h2 class="text-xl font-bold text-center mb-6">Pilih Lemari Penyimpanan</h2>
+            <div id="cabinetGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 mb-8">
+                <!-- Cabinet buttons injected here -->
+            </div>
+            
+            <div id="cabinetDetailArea" class="hidden">
+                <div class="flex items-center gap-2 mb-4">
+                    <button onclick="closeCabinetDetail()" class="text-slate-500 hover:text-slate-800"><i class="fas fa-arrow-left"></i> Kembali</button>
+                    <h3 class="text-lg font-bold">Isi Lemari: <span id="selectedCabinetName" class="text-primary"></span></h3>
+                </div>
+                <div id="cabinetListContainer" class="grid gap-4">
+                    <!-- Cabinet items injected here -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-3"></div>
+        <p class="text-slate-600 font-medium animate-pulse">Sinkronisasi Data...</p>
+    </div>
+
+    <!-- Modal Edit Status -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all scale-100 p-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Update Status</h3>
+                    <p class="text-sm text-slate-500">Ubah ketersediaan barang</p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+
+            <input type="hidden" id="selectedRowIndex">
+            
+            <div class="bg-slate-50 p-4 rounded-xl mb-5 border border-slate-100">
+                <div class="flex justify-between mb-1">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Style</span>
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Lemari</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span id="modalStyle" class="text-lg font-bold text-primary"></span>
+                    <span id="modalTempat" class="bg-slate-200 text-slate-700 px-2 py-1 rounded text-sm font-bold"></span>
+                </div>
+                <div class="mt-2 text-sm text-slate-600 border-t border-slate-200 pt-2 flex flex-col gap-1">
+                    <div class="flex justify-between"><span>Client:</span> <span id="modalClient" class="font-semibold">-</span></div>
+                    <div class="flex justify-between"><span>Sample No:</span> <span id="modalSample" class="font-semibold">-</span></div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Status Saat Ini</label>
+                    <select id="statusSelect" onchange="toggleBorrowerInput()" class="w-full rounded-lg border-slate-300 bg-slate-50 border p-3 text-slate-800 focus:ring-2 focus:ring-primary focus:outline-none">
+                        <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
+                        <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
+                    </select>
+                </div>
+
+                <div id="borrowerInputDiv" class="hidden animate-fade-in-down">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Nama Peminjam <span class="text-red-500">*</span></label>
+                    <input type="text" id="borrowerName" class="w-full rounded-lg border-slate-300 border p-3 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Masukkan nama...">
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition">Batal</button>
+                <button onclick="saveStatus()" id="btnSave" class="flex-1 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition flex justify-center items-center">
+                    <span>Simpan</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Untuk Alert Keren -->
-
+    <!-- Script Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // ==========================================
-        // KONFIGURASI PENTING
+        // CONFIG
         // ==========================================
-        // Tempel Link Web App (Exec) dari Google Script di sini:
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2NfqskzykTX38TOZ8l3O2UNxrMRFIjSxtvVPiWt_36LVy0fUaZqPa08-6IslOeXZ33g/exec";
+        // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT KAMU
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2NfqskzykTX38TOZ8l3O2UNxrMRFIjSxtvVPiWt_36LVy0fUaZqPa08-6IslOeXZ33g/exec"; 
         // ==========================================
 
         let inventoryData = [];
-        const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+        let allCabinets = [];
 
-        // Load data saat web dibuka
         document.addEventListener('DOMContentLoaded', () => {
             fetchData();
         });
 
-        // Search Listener (Realtime)
-        document.getElementById('searchInput').addEventListener('keyup', filterItems);
+        // --- Data Fetching ---
+        async function fetchData() {
+            document.getElementById('loader').classList.remove('hidden');
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const rawData = await response.json();
+                
+                // Normalisasi Data (Mengatasi masalah huruf besar/kecil di Header Excel)
+                // Kita map agar semua key jadi Uppercase biar konsisten
+                inventoryData = rawData.map(item => {
+                    const normalized = {};
+                    for (const key in item) {
+                        normalized[key.toUpperCase().trim()] = item[key]; // Ubah key jadi Uppercase (misal 'Style' -> 'STYLE')
+                        normalized['originalIndex'] = item.rowIndex; // Simpan row index asli
+                    }
+                    return normalized;
+                });
+
+                // Ekstrak data lemari unik
+                const cabinets = [...new Set(inventoryData.map(i => i['TEMPAT']))].filter(c => c).sort();
+                allCabinets = cabinets;
+
+                renderSearchList(inventoryData);
+                renderCabinetGrid();
+                document.getElementById('loader').classList.add('hidden');
+
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire('Gagal', 'Koneksi ke database bermasalah.', 'error');
+                document.getElementById('loader').classList.add('hidden');
+            }
+        }
+
+        // --- Rendering Logic ---
+
+        // Helper untuk menangani data kosong
+        const val = (v) => (v && v.toString().trim() !== "") ? v : "-";
+
+        function createCard(item) {
+            const status = item['STATUS'] || 'Tersedia';
+            const isBorrowed = status === 'Dipinjam';
+            const peminjam = item['PEMINJAM'] || '';
+
+            // Styling status
+            const statusBg = isBorrowed ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200';
+            const icon = isBorrowed ? 'fa-user-clock' : 'fa-check-circle';
+
+            return `
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group relative overflow-hidden" onclick='openModal(${JSON.stringify(item)})'>
+                
+                <!-- Status Badge Absolute -->
+                <div class="absolute top-4 right-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${statusBg}">
+                        <i class="fas ${icon}"></i>
+                        ${isBorrowed ? `Dipinjam: ${val(peminjam)}` : 'Tersedia'}
+                    </span>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <!-- Icon Lemari -->
+                    <div class="flex-shrink-0 w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-primary font-bold text-lg border border-indigo-100">
+                        ${val(item['TEMPAT'])}
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0 pt-1">
+                        <h4 class="text-lg font-bold text-slate-800 leading-none mb-1 group-hover:text-primary transition">${val(item['STYLE'])}</h4>
+                        <p class="text-sm text-slate-500 mb-3 truncate">${val(item['CLIENT'])} &bull; Sample No: ${val(item['SAMPLE NO'])}</p>
+                        
+                        <!-- Details Grid -->
+                        <div class="grid grid-cols-3 gap-2 text-xs border-t border-slate-100 pt-3 mt-2">
+                            <div>
+                                <span class="block text-slate-400 uppercase text-[10px] font-bold">Size</span>
+                                <span class="font-semibold text-slate-700">${val(item['SIZE'])}</span>
+                            </div>
+                            <div>
+                                <span class="block text-slate-400 uppercase text-[10px] font-bold">Qty</span>
+                                <span class="font-semibold text-slate-700">${val(item['QTY'])} ${val(item['UNIT'])}</span>
+                            </div>
+                            <div>
+                                <span class="block text-slate-400 uppercase text-[10px] font-bold">Date</span>
+                                <span class="font-semibold text-slate-700">${val(item['DATE']).toString().substring(0,10)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // --- View 1: Search ---
+        function renderSearchList(data) {
+            const container = document.getElementById('searchListContainer');
+            container.innerHTML = '';
+            document.getElementById('resultCount').innerText = data.length;
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
+                        <i class="fas fa-search text-4xl text-slate-200 mb-3"></i>
+                        <p class="text-slate-500">Tidak ada data ditemukan.</p>
+                    </div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                container.innerHTML += createCard(item);
+            });
+        }
+
+        function filterByStyle() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Filter HANYA berdasarkan STYLE
+            const filtered = inventoryData.filter(item => {
+                const style = item['STYLE'] ? item['STYLE'].toString().toLowerCase() : "";
+                return style.includes(keyword);
+            });
+            
+            renderSearchList(filtered);
+        }
+
+        // --- View 2: Cabinets ---
+        function renderCabinetGrid() {
+            const grid = document.getElementById('cabinetGrid');
+            grid.innerHTML = '';
+            
+            allCabinets.forEach(loc => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-primary hover:text-primary hover:shadow-md transition font-bold text-lg text-slate-700 flex flex-col items-center justify-center gap-2";
+                btn.innerHTML = `<i class="fas fa-archive text-slate-300 text-2xl"></i> ${loc}`;
+                btn.onclick = () => showCabinetDetail(loc);
+                grid.appendChild(btn);
+            });
+        }
+
+        function showCabinetDetail(location) {
+            document.getElementById('cabinetGrid').classList.add('hidden');
+            document.getElementById('cabinetDetailArea').classList.remove('hidden');
+            document.getElementById('selectedCabinetName').innerText = location;
+            
+            // Filter barang di lemari ini
+            const items = inventoryData.filter(i => i['TEMPAT'] === location);
+            const container = document.getElementById('cabinetListContainer');
+            container.innerHTML = '';
+            
+            items.forEach(item => {
+                container.innerHTML += createCard(item);
+            });
+        }
+
+        function closeCabinetDetail() {
+            document.getElementById('cabinetDetailArea').classList.add('hidden');
+            document.getElementById('cabinetGrid').classList.remove('hidden');
+        }
+
+        // --- Tabs Logic ---
+        function switchTab(tabName) {
+            const btnSearch = document.getElementById('tab-search');
+            const btnCab = document.getElementById('tab-cabinets');
+            const viewSearch = document.getElementById('view-search');
+            const viewCab = document.getElementById('view-cabinets');
+
+            if(tabName === 'search') {
+                btnSearch.className = "flex-1 py-2 text-sm font-medium rounded-lg bg-white shadow text-slate-900 transition-all duration-200";
+                btnCab.className = "flex-1 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all duration-200";
+                viewSearch.classList.remove('hidden');
+                viewCab.classList.add('hidden');
+            } else {
+                btnCab.className = "flex-1 py-2 text-sm font-medium rounded-lg bg-white shadow text-slate-900 transition-all duration-200";
+                btnSearch.className = "flex-1 py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-slate-900 transition-all duration-200";
+                viewCab.classList.remove('hidden');
+                viewSearch.classList.add('hidden');
+            }
+        }
+
+        // --- Modal Logic ---
+        function openModal(item) {
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.getElementById('selectedRowIndex').value = item['originalIndex']; // Pakai index asli
+            document.getElementById('modalStyle').innerText = val(item['STYLE']);
+            document.getElementById('modalClient').innerText = val(item['CLIENT']);
+            document.getElementById('modalSample').innerText = val(item['SAMPLE NO']);
+            document.getElementById('modalTempat').innerText = val(item['TEMPAT']);
+
+            const currentStatus = item['STATUS'] || 'Tersedia';
+            document.getElementById('statusSelect').value = currentStatus === 'Dipinjam' ? 'Dipinjam' : 'Tersedia';
+            
+            if(currentStatus === 'Dipinjam') {
+                document.getElementById('borrowerName').value = item['PEMINJAM'] || '';
+            } else {
+                document.getElementById('borrowerName').value = '';
+            }
+            toggleBorrowerInput();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+        }
 
         function toggleBorrowerInput() {
             const status = document.getElementById('statusSelect').value;
             const div = document.getElementById('borrowerInputDiv');
             if (status === 'Dipinjam') {
-                div.style.display = 'block';
+                div.classList.remove('hidden');
             } else {
-                div.style.display = 'none';
-                document.getElementById('borrowerName').value = '';
+                div.classList.add('hidden');
             }
         }
 
-        // 1. AMBIL DATA DARI GOOGLE SHEET
-        async function fetchData() {
-            document.getElementById('loader').style.display = 'flex';
-            
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                const data = await response.json();
-                inventoryData = data;
-                renderData(data);
-                document.getElementById('loader').style.display = 'none';
-            } catch (error) {
-                console.error("Error:", error);
-                Swal.fire('Error', 'Gagal mengambil data. Pastikan URL Script benar.', 'error');
-                document.getElementById('loader').style.display = 'none';
-            }
-        }
-
-        // 2. TAMPILKAN DATA KE LAYAR
-        function renderData(data) {
-            const desktopBody = document.getElementById('desktopTableBody');
-            const mobileList = document.getElementById('mobileList');
-            
-            desktopBody.innerHTML = '';
-            mobileList.innerHTML = '';
-            
-            document.getElementById('resultCount').innerText = data.length;
-
-            if(data.length === 0) {
-                mobileList.innerHTML = '<div class="text-center mt-5 text-muted">Data tidak ditemukan</div>';
-                return;
-            }
-
-            data.forEach(item => {
-                // Tentukan Warna Badge Status
-                let badgeClass = item.Status === 'Dipinjam' ? 'bg-warning text-dark' : 'bg-success';
-                let statusText = item.Status;
-                if(item.Status === 'Dipinjam' && item.Peminjam) {
-                    statusText += ` (${item.Peminjam})`;
-                }
-
-                // Render Desktop Row
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="badge ${badgeClass}">${statusText}</span></td>
-                    <td class="fw-bold text-primary">${item.Tempat}</td>
-                    <td>${item.Client}</td>
-                    <td>${item.Style}</td>
-                    <td>${item['Sample No'] || '-'}</td>
-                    <td>${item.Size}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick='openModal(${JSON.stringify(item)})'>
-                            <i class="fas fa-edit"></i> Update
-                        </button>
-                    </td>
-                `;
-                desktopBody.appendChild(tr);
-
-                // Render Mobile Card
-                const card = document.createElement('div');
-                card.className = 'item-card p-3 position-relative';
-                card.onclick = () => openModal(item); // Klik kartu buka modal
-                card.innerHTML = `
-                    <span class="status-badge ${badgeClass}">${statusText}</span>
-                    <div class="row">
-                        <div class="col-8">
-                            <h6 class="mb-1 text-primary fw-bold">${item.Style}</h6>
-                            <small class="text-muted">${item.Client} - ${item['Sample No'] || 'No Sample'}</small>
-                        </div>
-                        <div class="col-4 text-end">
-                            <h4 class="mb-0 fw-bold">${item.Tempat}</h4>
-                            <small class="text-muted">Lokasi</small>
-                        </div>
-                    </div>
-                    <hr class="my-2 opacity-10">
-                    <div class="d-flex justify-content-between">
-                        <div><span class="detail-label">Size:</span> <span class="detail-value">${item.Size}</span></div>
-                        <div><span class="detail-label">Qty:</span> <span class="detail-value">${item.Qty} ${item.Unit}</span></div>
-                    </div>
-                `;
-                mobileList.appendChild(card);
-            });
-        }
-
-        // 3. FITUR PENCARIAN
-        function filterItems() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = inventoryData.filter(item => {
-                return (
-                    (item.Style && item.Style.toString().toLowerCase().includes(keyword)) ||
-                    (item.Client && item.Client.toLowerCase().includes(keyword)) ||
-                    (item['Sample No'] && item['Sample No'].toString().toLowerCase().includes(keyword)) ||
-                    (item.Tempat && item.Tempat.toLowerCase().includes(keyword))
-                );
-            });
-            renderData(filtered);
-        }
-
-        // 4. BUKA MODAL UPDATE
-        function openModal(item) {
-            document.getElementById('selectedRowIndex').value = item.rowIndex;
-            document.getElementById('modalItemName').innerText = item.Style;
-            document.getElementById('modalItemDetail').innerText = `Client: ${item.Client} | Lokasi: ${item.Tempat}`;
-            
-            // Set current status
-            const currentStatus = item.Status === 'Dipinjam' ? 'Dipinjam' : 'Tersedia';
-            document.getElementById('statusSelect').value = currentStatus;
-            
-            if(currentStatus === 'Dipinjam') {
-                document.getElementById('borrowerName').value = item.Peminjam || '';
-            }
-            
-            toggleBorrowerInput();
-            statusModal.show();
-        }
-
-        // 5. SIMPAN DATA (KIRIM KE GOOGLE SHEET)
         async function saveStatus() {
             const rowIndex = document.getElementById('selectedRowIndex').value;
             const status = document.getElementById('statusSelect').value;
             const borrower = document.getElementById('borrowerName').value;
 
-            if (status === 'Dipinjam' && !borrower) {
-                Swal.fire('Perhatian', 'Nama peminjam wajib diisi!', 'warning');
+            if (status === 'Dipinjam' && !borrower.trim()) {
+                Swal.fire('Error', 'Nama peminjam wajib diisi!', 'warning');
                 return;
             }
 
-            // Tampilan Loading di tombol
-            const btn = document.querySelector('.modal-footer .btn-primary');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Menyimpan...';
+            const btn = document.getElementById('btnSave');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
             btn.disabled = true;
 
             try {
-                // Kirim data menggunakan fetch POST (no-cors mode untuk bypass isu browser, tapi kita pakai teknik kirim String JSON)
-                // Teknik ini menggunakan "text/plain" agar tidak kena preflight CORS
+                // Fetch ke Apps Script
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ rowIndex, status, borrower })
+                    body: JSON.stringify({ rowIndex: rowIndex, status, borrower })
                 });
 
-                // Tutup Modal & Refresh
-                statusModal.hide();
+                closeModal();
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil',
-                    text: 'Status barang telah diperbarui',
+                    text: 'Data berhasil disimpan',
                     timer: 1500,
                     showConfirmButton: false
                 });
                 
-                // Refresh data otomatis
-                fetchData();
+                fetchData(); // Refresh data
 
             } catch (error) {
                 console.error(error);
                 Swal.fire('Error', 'Gagal menyimpan data', 'error');
             } finally {
-                btn.innerHTML = originalText;
+                btn.innerHTML = originalContent;
                 btn.disabled = false;
             }
         }
+
+        // Close modal on click outside
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
     </script>
 </body>
 </html>
