@@ -313,8 +313,11 @@
                 allCabinets = [...new Set(inventoryData.map(i => i['TEMPAT']))].filter(c => c).sort();
                 
                 updateDashboard();
-                renderSearchList(inventoryData);
-                renderCabinetGrid();
+                // SEBELUMNYA: renderSearchList(inventoryData); 
+                // GANTI JADI INI:
+                renderRecentList(inventoryData); // Render barang terbaru saja
+                document.getElementById('view-default').classList.remove('hidden');
+                document.getElementById('view-search-results').classList.add('hidden');                renderCabinetGrid();
                 
             } catch (error) {
                 console.error(error);
@@ -407,24 +410,63 @@
             </div>`;
         }
 
-        function renderSearchList(data) {
+        function renderRecentList(data) {
+            const container = document.getElementById('recentListContainer');
+            container.innerHTML = '';
+
+            // Ambil 6 Item TERAKHIR dari array (Asumsi data baru ada di bawah Excel)
+            // .slice(-6) mengambil 6 terakhir, .reverse() membalik urutan biar yg baru paling atas
+            const recentItems = data.slice(-6).reverse(); 
+
+            if (recentItems.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50"><p>Belum ada data barang.</p></div>`;
+                return;
+            }
+
+            recentItems.forEach(item => {
+                container.innerHTML += createCard(item);
+            });
+        }
+
+       function renderSearchList(data) {
             const container = document.getElementById('searchListContainer');
             container.innerHTML = '';
-            document.getElementById('resultCount').innerText = `${data.length} Item`;
+            document.getElementById('resultCount').innerText = `${data.length} Ditemukan`;
             
             if (data.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50"><i class="fas fa-box-open text-4xl mb-2"></i><p>Tidak ada data</p></div>`;
+                // Tampilan Modern kalau barang tidak ketemu
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                        <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
+                        <h4 class="text-slate-500 font-bold">Barang tidak ditemukan</h4>
+                        <p class="text-xs text-slate-400 mt-1">Coba kata kunci lain</p>
+                    </div>`;
                 return;
             }
             data.forEach(item => container.innerHTML += createCard(item));
         }
 
-        function filterByStyle() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
+  function filterByStyle() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            const viewDefault = document.getElementById('view-default');
+            const viewSearch = document.getElementById('view-search-results');
+
+            // KONDISI 1: Jika kotak pencarian KOSONG
+            if (keyword === "") {
+                viewDefault.classList.remove('hidden'); // Tampilkan Terbaru
+                viewSearch.classList.add('hidden');     // Sembunyikan Hasil Cari
+                return;
+            }
+
+            // KONDISI 2: Jika user MENGETIK
+            viewDefault.classList.add('hidden');    // Sembunyikan Terbaru
+            viewSearch.classList.remove('hidden');  // Tampilkan Hasil Cari
+
             const filtered = inventoryData.filter(item => {
                 const style = item['STYLE'] ? item['STYLE'].toString().toLowerCase() : "";
                 return style.includes(keyword);
             });
+            
             renderSearchList(filtered);
         }
 
@@ -692,5 +734,6 @@
     </script>
 </body>
 </html>
+
 
 
