@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gudang Sample RnD - Gagaclo</title>
+    <title>Gudang Sample</title>
     <!-- Favicon: Baju -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👕</text></svg>">
     
@@ -74,7 +74,7 @@
             <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
                 <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Tersedia</p>
                 <h3 class="text-3xl font-bold" id="statAvailable">0</h3>
-                <p class="text-xs text-emerald-100 mt-1 opacity-80">Siap digunakan</p>
+                <p class="text-xs text-emerald-100 mt-1 opacity-80">Barang di lemari</p>
             </div>
             <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-5 text-white shadow-lg shadow-amber-500/20">
                 <p class="text-amber-100 text-xs font-bold uppercase tracking-wider mb-1">Dipinjam</p>
@@ -341,25 +341,53 @@
             const status = item['STATUS'] || 'Tersedia';
             const isBorrowed = status === 'Dipinjam';
             const peminjam = item['PEMINJAM'] || '';
-            const statusClass = isBorrowed ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
+            
+            // Logika warna status
+            const statusClass = isBorrowed 
+                ? 'bg-amber-100 text-amber-700 border border-amber-200' 
+                : 'bg-emerald-100 text-emerald-700 border border-emerald-200';
             const icon = isBorrowed ? 'fa-user-clock' : 'fa-check-circle';
             const statusText = isBorrowed ? `Dipinjam: ${peminjam}` : 'Tersedia';
 
+            // Logika Warna Kotak Lemari (Supaya kontras)
+            // Kita pakai warna gelap (Slate-800) biar seperti "Label Rak"
+            
             return `
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg transition cursor-pointer group" onclick='openModal(${JSON.stringify(item)})'>
-                <div class="flex justify-between items-start mb-2">
-                    <span class="bg-slate-800 text-white text-[10px] font-bold px-2 py-0.5 rounded">${val(item['TEMPAT'])}</span>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusClass}">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 hover:shadow-lg hover:border-primary/30 transition cursor-pointer group relative" onclick='openModal(${JSON.stringify(item)})'>
+                
+                <!-- STATUS BADGE (Pojok Kanan Atas) -->
+                <div class="absolute top-4 right-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusClass}">
                         <i class="fas ${icon}"></i> ${statusText}
                     </span>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-primary font-bold text-lg">
-                        ${val(item['STYLE']).toString().charAt(0)}
+
+                <div class="flex items-center gap-5">
+                    
+                    <!-- 1. FOKUS NOMER LEMARI (Ganti Icon "7" jadi Lokasi "1A") -->
+                    <div class="w-16 h-16 rounded-2xl bg-slate-800 flex flex-col items-center justify-center text-white shadow-lg shadow-slate-300/50">
+                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">RAK</span>
+                        <span class="text-2xl font-black leading-none">${val(item['TEMPAT'])}</span>
                     </div>
-                    <div>
-                        <h4 class="text-lg font-bold text-slate-800 leading-tight group-hover:text-primary transition">${val(item['STYLE'])}</h4>
-                        <p class="text-xs text-slate-500 font-bold uppercase">${val(item['CLIENT'])}</p>
+
+                    <div class="flex-1 min-w-0 py-1">
+                        <!-- 2. CLIENT (Kecil di atas) -->
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-0.5 tracking-wide">${val(item['CLIENT'])}</p>
+                        
+                        <!-- 3. NAMA STYLE (Diperbesar & Ditonjolkan) -->
+                        <h4 class="text-3xl font-black text-slate-800 leading-none mb-2 group-hover:text-primary transition truncate">
+                            ${val(item['STYLE'])}
+                        </h4>
+                        
+                        <!-- 4. INFO SIZE (Ditampilkan di bawah) -->
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block bg-slate-100 text-slate-600 text-xs font-mono font-bold px-2 py-1 rounded border border-slate-200">
+                                Size: ${val(item['SIZE'])}
+                            </span>
+                            <span class="text-xs text-slate-400 border-l border-slate-300 pl-2">
+                                Qty: ${val(item['QTY'])} ${val(item['UNIT'])}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -650,3 +678,4 @@
     </script>
 </body>
 </html>
+
