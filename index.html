@@ -3,99 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gudang Sample - R&D Gagaclo</title>
+    <title>Gudang Sample - R&D Management</title>
     
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👕</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- SweetAlert2 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <script>
-        tailwind.config = {
-            theme: {
-                fontFamily: { sans: ['"Inter"', 'sans-serif'] },
-                extend: {
-                    colors: {
-                        primary: '#6366f1',
-                        secondary: '#10b981',
-                        danger: '#ef4444',
-                        warning: '#f59e0b',
-                    }
-                }
-            }
-        }
-    </script>
-    
     <style>
+        :root {
+            --bg-primary: #18181b;
+            --bg-secondary: #27272a;
+            --bg-tertiary: #3f3f46;
+            --border: #52525b;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border); }
         
-        /* Smooth animations */
-        * { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+        /* Search Section */
+        .search-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
         
-        /* Glass effect */
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .search-input {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            padding: 14px 20px 14px 52px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+        }
         
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--bg-tertiary);
+        }
+        
+        /* Item Cards */
+        .item-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .item-card:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+            transform: translateX(2px);
+        }
+        
+        /* Location Badge */
+        .location-badge {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 15px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            border: 1px solid var(--border);
+        }
+        
+        /* Status Badges */
+        .badge-available {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .badge-borrowed {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        /* Filter Pills */
+        .filter-pill {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-pill:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .filter-pill.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        /* Input Fields */
+        input, select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+        
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Loading */
+        .loading-spinner {
+            border: 3px solid var(--bg-tertiary);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         
         .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
-        .animate-slideUp { animation: slideUp 0.3s ease-out; }
-        .animate-slideDown { animation: slideDown 0.3s ease-out; }
-        .animate-spin { animation: spin 1s linear infinite; }
+        .animate-slideUp { animation: slideUp 0.4s ease-out; }
         
-        /* Status badges */
-        .badge-available { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .badge-borrowed { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        
-        /* Responsive font sizing */
-        html { font-size: 16px; }
-        @media (max-width: 1400px) { html { font-size: 14px; } }
-        @media (max-width: 768px) { html { font-size: 13px; } }
+        /* Responsive */
+        @media (max-width: 1400px) {
+            html { font-size: 14px; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body>
 
     <!-- NAVBAR -->
-    <nav class="glass border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo & Title -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-2.5 rounded-xl shadow-lg">
-                        <i class="fas fa-tshirt text-xl"></i>
+    <nav class="sticky top-0 z-50" style="background: var(--bg-secondary); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px);">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent);">
+                        <i class="fas fa-boxes text-lg text-white"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg text-slate-900">Gudang Sample</h1>
-                        <p class="text-xs text-slate-500">R&D Gagaclo</p>
+                        <h1 class="text-lg font-bold" style="color: var(--text-primary);">Gudang Sample</h1>
+                        <p class="text-xs" style="color: var(--text-secondary);">R&D Inventory Management</p>
                     </div>
                 </div>
                 
-                <!-- Actions -->
-                <div class="flex items-center gap-2">
-                    <button onclick="openAddModal()" 
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium shadow-lg shadow-indigo-500/30 flex items-center gap-2">
+                <div class="flex items-center gap-3">
+                    <button onclick="openAddModal()" class="btn btn-primary flex items-center gap-2">
                         <i class="fas fa-plus"></i>
-                        <span class="hidden sm:inline">Tambah</span>
+                        <span>Tambah Barang</span>
                     </button>
-                    <button onclick="fetchData()" 
-                        class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 p-2.5 rounded-lg">
+                    <button onclick="fetchData()" class="btn btn-secondary px-4">
                         <i class="fas fa-sync-alt" id="refreshIcon"></i>
                     </button>
                 </div>
@@ -103,203 +304,168 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main class="max-w-7xl mx-auto px-6 py-6">
         
-        <!-- STATS DASHBOARD -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 animate-slideDown">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-blue-100 text-sm font-medium mb-1">Total Aset</p>
-                        <h3 class="text-3xl font-bold" id="statTotal">0</h3>
-                        <p class="text-xs text-blue-100 mt-1">Item terdaftar</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-lg">
-                        <i class="fas fa-database text-2xl"></i>
-                    </div>
+        <!-- STATS -->
+        <div class="grid grid-cols-3 gap-4 mb-6 animate-slideUp">
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium" style="color: var(--text-secondary);">Total Items</div>
+                    <i class="fas fa-database" style="color: var(--text-secondary);"></i>
                 </div>
+                <div class="text-3xl font-bold" id="statTotal">0</div>
             </div>
             
-            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-emerald-100 text-sm font-medium mb-1">Tersedia</p>
-                        <h3 class="text-3xl font-bold" id="statAvailable">0</h3>
-                        <p class="text-xs text-emerald-100 mt-1">Di lemari</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-lg">
-                        <i class="fas fa-check-circle text-2xl"></i>
-                    </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium" style="color: var(--text-secondary);">Tersedia</div>
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
                 </div>
+                <div class="text-3xl font-bold" style="color: var(--success);" id="statAvailable">0</div>
             </div>
             
-            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-5 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-amber-100 text-sm font-medium mb-1">Dipinjam</p>
-                        <h3 class="text-3xl font-bold" id="statBorrowed">0</h3>
-                        <p class="text-xs text-amber-100 mt-1">Di produksi</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-lg">
-                        <i class="fas fa-hand-holding text-2xl"></i>
-                    </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm font-medium" style="color: var(--text-secondary);">Dipinjam</div>
+                    <i class="fas fa-hand-holding" style="color: var(--warning);"></i>
                 </div>
+                <div class="text-3xl font-bold" style="color: var(--warning);" id="statBorrowed">0</div>
             </div>
         </div>
 
-        <!-- FILTER & SEARCH -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
-            <div class="flex flex-col md:flex-row gap-4">
+        <!-- SEARCH & FILTER -->
+        <div class="search-section mb-6 animate-slideUp" style="animation-delay: 0.1s;">
+            <div class="grid grid-cols-12 gap-4 items-end">
                 <!-- Search -->
-                <div class="flex-1">
+                <div class="col-span-6">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Cari Barang</label>
                     <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
-                        <input type="text" id="searchInput" 
-                            placeholder="Cari berdasarkan style, client, atau sample no..." 
-                            class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2" style="color: var(--text-secondary);"></i>
+                        <input type="text" id="searchInput" class="search-input" 
+                            placeholder="Style, client, sample no, atau lokasi..." 
                             onkeyup="performSearch()">
                     </div>
                 </div>
                 
-                <!-- Filter Status -->
-                <div class="flex gap-2">
-                    <button onclick="filterByStatus('all')" id="filter-all" 
-                        class="px-4 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-                        Semua
-                    </button>
-                    <button onclick="filterByStatus('tersedia')" id="filter-tersedia" 
-                        class="px-4 py-2.5 rounded-lg font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
-                        Tersedia
-                    </button>
-                    <button onclick="filterByStatus('dipinjam')" id="filter-dipinjam" 
-                        class="px-4 py-2.5 rounded-lg font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
-                        Dipinjam
-                    </button>
+                <!-- Cabinet Filter -->
+                <div class="col-span-3">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Lemari</label>
+                    <select id="cabinetFilter" onchange="filterByCabinet()" class="w-full">
+                        <option value="">Semua Lemari</option>
+                    </select>
                 </div>
                 
-                <!-- Cabinet Filter -->
-                <select id="cabinetFilter" onchange="filterByCabinet()" 
-                    class="px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Semua Lemari</option>
-                </select>
+                <!-- Status Filter -->
+                <div class="col-span-3">
+                    <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Status</label>
+                    <div class="flex gap-2">
+                        <button onclick="filterByStatus('all')" id="filter-all" class="filter-pill active flex-1">Semua</button>
+                        <button onclick="filterByStatus('tersedia')" id="filter-tersedia" class="filter-pill flex-1">Tersedia</button>
+                        <button onclick="filterByStatus('dipinjam')" id="filter-dipinjam" class="filter-pill flex-1">Dipinjam</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- DATA LIST -->
-        <div class="mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-slate-800" id="listTitle">Semua Barang</h2>
-                <span id="resultCount" class="bg-slate-100 text-slate-600 text-sm font-medium px-3 py-1 rounded-full">
-                    0 item
-                </span>
-            </div>
-            
-            <!-- Loading State -->
-            <div id="loadingState" class="hidden bg-white rounded-xl border border-slate-200 p-12">
-                <div class="flex flex-col items-center justify-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-600 mb-4"></div>
-                    <p class="text-slate-500 font-medium">Memuat data...</p>
-                </div>
-            </div>
-            
-            <!-- Items Container -->
-            <div id="itemsContainer" class="space-y-3"></div>
-            
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden bg-white rounded-xl border border-slate-200 p-12">
-                <div class="text-center">
-                    <i class="fas fa-box-open text-5xl text-slate-300 mb-4"></i>
-                    <h3 class="text-lg font-bold text-slate-700 mb-2">Tidak ada data</h3>
-                    <p class="text-slate-500">Belum ada barang yang terdaftar atau tidak ditemukan hasil pencarian</p>
-                </div>
-            </div>
+        <!-- RESULTS HEADER -->
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-semibold" style="color: var(--text-primary);">
+                <span id="resultCount" style="color: var(--accent);">0</span> hasil ditemukan
+            </h3>
+        </div>
+
+        <!-- LOADING -->
+        <div id="loadingState" class="hidden text-center py-16">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-sm" style="color: var(--text-secondary);">Memuat data...</p>
+        </div>
+
+        <!-- ITEMS LIST -->
+        <div id="itemsContainer" class="space-y-2"></div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <i class="fas fa-inbox text-5xl mb-4" style="color: var(--text-secondary);"></i>
+            <h3 class="text-lg font-semibold mb-1" style="color: var(--text-primary);">Tidak ada data</h3>
+            <p class="text-sm" style="color: var(--text-secondary);">Coba ubah filter atau kata kunci pencarian</p>
         </div>
     </main>
 
-    <!-- MODAL: Detail Item -->
-    <div id="modalDetail" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp">
-            <!-- Header -->
-            <div class="sticky top-0 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-6 rounded-t-2xl">
+    <!-- MODAL: DETAIL -->
+    <div id="modalDetail" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-6">
+        <div class="modal-content w-full max-w-2xl max-h-[85vh] overflow-y-auto animate-slideUp">
+            <div class="p-6" style="border-bottom: 1px solid var(--border);">
                 <div class="flex items-start justify-between">
                     <div class="flex-1">
-                        <h2 class="text-2xl font-bold mb-1" id="detailStyle">-</h2>
-                        <p class="text-indigo-100 text-sm" id="detailClient">-</p>
+                        <h2 class="text-xl font-bold mb-2" id="detailStyle">-</h2>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="location-badge" id="detailTempat">-</span>
+                            <span class="text-sm" style="color: var(--text-secondary);" id="detailClient">-</span>
+                        </div>
                     </div>
-                    <button onclick="closeDetailModal()" class="text-white hover:bg-white/20 p-2 rounded-lg">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="closeDetailModal()" class="text-2xl" style="color: var(--text-secondary);" 
+                        onmouseover="this.style.color='var(--text-primary)'" 
+                        onmouseout="this.style.color='var(--text-secondary)'">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
             
-            <!-- Content -->
             <div class="p-6 space-y-6">
-                <!-- Status Card -->
-                <div class="bg-slate-50 rounded-xl p-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-3">Status Barang</label>
-                    <div class="flex items-center gap-3 mb-3">
-                        <select id="statusSelect" onchange="toggleBorrowerInput()" 
-                            class="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option value="Tersedia">✅ Tersedia di Lemari</option>
-                            <option value="Dipinjam">📦 Sedang Dipinjam</option>
+                <!-- Status Update -->
+                <div class="stat-card">
+                    <label class="block text-sm font-semibold mb-3" style="color: var(--text-primary);">Update Status</label>
+                    <div class="flex gap-3 mb-3">
+                        <select id="statusSelect" onchange="toggleBorrowerInput()" class="flex-1">
+                            <option value="Tersedia">Tersedia di Lemari</option>
+                            <option value="Dipinjam">Sedang Dipinjam</option>
                         </select>
-                        <button onclick="saveStatus()" id="btnSaveStatus" 
-                            class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">
-                            <i class="fas fa-save mr-2"></i>Update
+                        <button onclick="saveStatus()" id="btnSaveStatus" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i>Simpan
                         </button>
                     </div>
-                    
-                    <!-- Borrower Input (conditional) -->
                     <div id="borrowerInputDiv" class="hidden">
-                        <input type="text" id="borrowerName" placeholder="Nama peminjam / departemen" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input type="text" id="borrowerName" placeholder="Nama peminjam..." class="w-full">
                     </div>
                 </div>
                 
-                <!-- Details Grid -->
+                <!-- Details -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Lokasi</label>
-                        <p class="text-sm font-semibold text-slate-800" id="detailTempat">-</p>
+                        <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Sample No</label>
+                        <p class="text-sm font-semibold" id="detailSample">-</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Sample No</label>
-                        <p class="text-sm font-semibold text-slate-800" id="detailSample">-</p>
+                        <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Size</label>
+                        <p class="text-sm font-semibold" id="detailSize">-</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Size</label>
-                        <p class="text-sm font-semibold text-slate-800" id="detailSize">-</p>
+                        <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Quantity</label>
+                        <p class="text-sm font-semibold" id="detailQty">-</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Quantity</label>
-                        <p class="text-sm font-semibold text-slate-800" id="detailQty">-</p>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Tanggal Masuk</label>
-                        <p class="text-sm font-semibold text-slate-800" id="detailDate">-</p>
+                        <label class="block text-xs font-medium mb-1" style="color: var(--text-secondary);">Tanggal Masuk</label>
+                        <p class="text-sm font-semibold" id="detailDate">-</p>
                     </div>
                 </div>
                 
-                <!-- History Timeline -->
+                <!-- History -->
                 <div>
-                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fas fa-history text-indigo-600"></i>
-                        Riwayat Status
+                    <h3 class="font-semibold mb-3 flex items-center gap-2" style="color: var(--text-primary);">
+                        <i class="fas fa-history" style="color: var(--accent);"></i>
+                        Riwayat
                     </h3>
-                    <div class="border-l-2 border-slate-200 pl-6 space-y-4" id="logContainer">
-                        <p class="text-sm text-slate-400 italic">Memuat riwayat...</p>
+                    <div id="logContainer" style="border-left: 2px solid var(--border); padding-left: 16px;">
+                        <p class="text-sm" style="color: var(--text-secondary);">Memuat...</p>
                     </div>
                 </div>
                 
-                <!-- Action Buttons -->
-                <div class="flex gap-3 pt-4 border-t border-slate-200">
-                    <button onclick="editItemMode()" 
-                        class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">
-                        <i class="fas fa-edit mr-2"></i>Edit Detail
+                <!-- Actions -->
+                <div class="flex gap-3 pt-4" style="border-top: 1px solid var(--border);">
+                    <button onclick="editItemMode()" class="btn btn-secondary flex-1">
+                        <i class="fas fa-edit mr-2"></i>Edit
                     </button>
-                    <button onclick="deleteItem()" 
-                        class="flex-1 px-4 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium">
+                    <button onclick="deleteItem()" class="btn btn-danger flex-1">
                         <i class="fas fa-trash mr-2"></i>Hapus
                     </button>
                 </div>
@@ -307,103 +473,76 @@
         </div>
     </div>
 
-    <!-- MODAL: Add/Edit Form -->
-    <div id="modalForm" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp">
-            <!-- Header -->
-            <div class="sticky top-0 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-6 rounded-t-2xl">
+    <!-- MODAL: FORM -->
+    <div id="modalForm" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-6">
+        <div class="modal-content w-full max-w-2xl max-h-[85vh] overflow-y-auto animate-slideUp">
+            <div class="p-6" style="border-bottom: 1px solid var(--border);">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold" id="formTitle">Tambah Barang Baru</h2>
-                    <button onclick="closeFormModal()" class="text-white hover:bg-white/20 p-2 rounded-lg">
-                        <i class="fas fa-times text-xl"></i>
+                    <h2 class="text-lg font-bold" id="formTitle">Tambah Barang Baru</h2>
+                    <button onclick="closeFormModal()" class="text-2xl" style="color: var(--text-secondary);"
+                        onmouseover="this.style.color='var(--text-primary)'" 
+                        onmouseout="this.style.color='var(--text-secondary)'">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
             
-            <!-- Form -->
-            <form onsubmit="submitItemForm(event)" id="itemForm" class="p-6 space-y-4">
+            <form onsubmit="submitItemForm(event)" id="itemForm" class="p-6">
                 <input type="hidden" id="editRowIndex">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Style -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">
-                            Style Name <span class="text-red-500">*</span>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
+                            Style Name <span style="color: var(--danger);">*</span>
                         </label>
-                        <input type="text" id="inStyle" required 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                            placeholder="e.g., DELTA TECH OPS VEST">
+                        <input type="text" id="inStyle" required placeholder="DELTA TECH OPS VEST">
                     </div>
                     
-                    <!-- Client -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Client</label>
-                        <input type="text" id="inClient" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                            placeholder="e.g., AN05">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Client</label>
+                        <input type="text" id="inClient" placeholder="AN05">
                     </div>
                     
-                    <!-- Lokasi/Tempat -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">
-                            Lokasi Lemari <span class="text-red-500">*</span>
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
+                            Lokasi Lemari <span style="color: var(--danger);">*</span>
                         </label>
-                        <input type="text" id="inTempat" required 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                            placeholder="e.g., C5B, A1A">
+                        <input type="text" id="inTempat" required placeholder="C5B">
                     </div>
                     
-                    <!-- Sample No -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Sample No</label>
-                        <input type="text" id="inSample" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                            placeholder="e.g., RK01">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Sample No</label>
+                        <input type="text" id="inSample" placeholder="RK01">
                     </div>
                     
-                    <!-- Size -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Size</label>
-                        <input type="text" id="inSize" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                            placeholder="e.g., M, L, XL">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Size</label>
+                        <input type="text" id="inSize" placeholder="M, L, XL">
                     </div>
                     
-                    <!-- Quantity -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Qty</label>
-                        <input type="number" id="inQty" min="1" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                            placeholder="1">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Qty</label>
+                        <input type="number" id="inQty" min="1" placeholder="1">
                     </div>
                     
-                    <!-- Unit -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Unit</label>
-                        <select id="inUnit" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Unit</label>
+                        <select id="inUnit">
                             <option value="PCS">PCS</option>
                             <option value="SET">SET</option>
                             <option value="PACK">PACK</option>
                         </select>
                     </div>
                     
-                    <!-- Date -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Tanggal Masuk</label>
-                        <input type="date" id="inDate" 
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Tanggal Masuk</label>
+                        <input type="date" id="inDate">
                     </div>
                 </div>
                 
-                <!-- Submit Button -->
-                <div class="flex gap-3 pt-4">
-                    <button type="button" onclick="closeFormModal()" 
-                        class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">
-                        Batal
-                    </button>
-                    <button type="submit" id="btnFormSubmit" 
-                        class="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeFormModal()" class="btn btn-secondary flex-1">Batal</button>
+                    <button type="submit" id="btnFormSubmit" class="btn btn-primary flex-1">
                         <i class="fas fa-save mr-2"></i>Simpan Data
                     </button>
                 </div>
@@ -411,9 +550,8 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
-        // === CONFIGURATION ===
+        // GANTI URL INI DENGAN GOOGLE APPS SCRIPT KAMU!
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbykDMMuhXxj1Y8Eag7xsgm5FtmFU1BQWQHM1NWF_T3uH_I5CeQq3C2_fJKVbVWkpq9y/exec';
         
         let allData = [];
@@ -424,49 +562,67 @@
         let currentSearchQuery = '';
         let currentCabinetFilter = '';
 
-        // === INITIALIZATION ===
         document.addEventListener('DOMContentLoaded', () => {
             fetchData();
             document.getElementById('inDate').valueAsDate = new Date();
         });
 
-        // === DATA FETCHING ===
         async function fetchData() {
             const icon = document.getElementById('refreshIcon');
-            icon.classList.add('animate-spin');
+            icon.style.animation = 'spin 0.8s linear infinite';
             showLoading();
             
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const data = await response.json();
-                
                 allData = data.data || [];
                 logsData = data.logs || [];
-                
                 updateStats();
                 populateCabinetFilter();
                 applyFilters();
             } catch (error) {
-                console.error('Error fetching data:', error);
-                Swal.fire('Error', 'Gagal memuat data dari server', 'error');
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal memuat data dari server',
+                    background: '#27272a',
+                    color: '#fafafa',
+                    confirmButtonColor: '#3b82f6'
+                });
             } finally {
-                icon.classList.remove('animate-spin');
+                icon.style.animation = '';
                 hideLoading();
             }
         }
 
-        // === STATS UPDATE ===
         function updateStats() {
             const total = allData.length;
             const available = allData.filter(item => item.STATUS === 'Tersedia').length;
             const borrowed = allData.filter(item => item.STATUS === 'Dipinjam').length;
             
-            document.getElementById('statTotal').textContent = total;
-            document.getElementById('statAvailable').textContent = available;
-            document.getElementById('statBorrowed').textContent = borrowed;
+            animateValue('statTotal', 0, total, 600);
+            animateValue('statAvailable', 0, available, 600);
+            animateValue('statBorrowed', 0, borrowed, 600);
         }
 
-        // === CABINET FILTER POPULATION ===
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            if (range === 0) {
+                element.textContent = end;
+                return;
+            }
+            const increment = end > start ? 1 : -1;
+            const stepTime = Math.abs(Math.floor(duration / range));
+            let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                element.textContent = current;
+                if (current === end) clearInterval(timer);
+            }, stepTime);
+        }
+
         function populateCabinetFilter() {
             const cabinets = [...new Set(allData.map(item => item.TEMPAT || '').filter(Boolean))].sort();
             const select = document.getElementById('cabinetFilter');
@@ -476,10 +632,12 @@
             });
         }
 
-        // === FILTER FUNCTIONS ===
         function filterByStatus(status) {
             currentStatusFilter = status;
-            updateFilterButtons();
+            ['all', 'tersedia', 'dipinjam'].forEach(s => {
+                const btn = document.getElementById(`filter-${s}`);
+                btn.className = s === status ? 'filter-pill active flex-1' : 'filter-pill flex-1';
+            });
             applyFilters();
         }
 
@@ -493,29 +651,15 @@
             applyFilters();
         }
 
-        function updateFilterButtons() {
-            ['all', 'tersedia', 'dipinjam'].forEach(status => {
-                const btn = document.getElementById(`filter-${status}`);
-                if (status === currentStatusFilter) {
-                    btn.className = 'px-4 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 border border-indigo-200';
-                } else {
-                    btn.className = 'px-4 py-2.5 rounded-lg font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50';
-                }
-            });
-        }
-
         function applyFilters() {
             filteredData = allData.filter(item => {
-                // Status filter
                 if (currentStatusFilter !== 'all') {
                     const status = currentStatusFilter === 'tersedia' ? 'Tersedia' : 'Dipinjam';
                     if (item.STATUS !== status) return false;
                 }
                 
-                // Cabinet filter
                 if (currentCabinetFilter && item.TEMPAT !== currentCabinetFilter) return false;
                 
-                // Search filter
                 if (currentSearchQuery) {
                     const searchFields = [
                         item.STYLE || '',
@@ -534,7 +678,6 @@
             renderItems();
         }
 
-        // === RENDER ITEMS ===
         function renderItems() {
             const container = document.getElementById('itemsContainer');
             const emptyState = document.getElementById('emptyState');
@@ -543,61 +686,53 @@
             if (filteredData.length === 0) {
                 container.classList.add('hidden');
                 emptyState.classList.remove('hidden');
-                resultCount.textContent = '0 item';
+                resultCount.textContent = '0';
                 return;
             }
             
             container.classList.remove('hidden');
             emptyState.classList.add('hidden');
-            resultCount.textContent = `${filteredData.length} item`;
+            resultCount.textContent = filteredData.length;
             
             container.innerHTML = filteredData.map((item, index) => {
                 const isAvailable = item.STATUS === 'Tersedia';
-                const statusBadge = isAvailable 
-                    ? '<span class="badge-available px-2 py-1 rounded-md text-xs font-medium">✅ Tersedia</span>'
-                    : '<span class="badge-borrowed px-2 py-1 rounded-md text-xs font-medium">📦 Dipinjam</span>';
+                const badgeClass = isAvailable ? 'badge-available' : 'badge-borrowed';
+                const badgeText = isAvailable ? 'Tersedia' : 'Dipinjam';
                 
                 return `
-                    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg hover:border-indigo-200 cursor-pointer animate-fadeIn" 
-                         onclick="openDetailModal(${item.originalIndex})" style="animation-delay: ${index * 0.03}s">
-                        <div class="flex items-start justify-between gap-4">
+                    <div class="item-card animate-fadeIn" onclick="openDetailModal(${item.originalIndex})" style="animation-delay: ${index * 0.02}s">
+                        <div class="flex items-center gap-4">
+                            <div class="location-badge">${item.TEMPAT || 'N/A'}</div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <div class="bg-slate-700 text-white px-2 py-1 rounded text-xs font-bold">
-                                        ${item.TEMPAT || 'N/A'}
-                                    </div>
-                                    ${statusBadge}
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h3 class="text-base font-semibold truncate" style="color: var(--text-primary);">${item.STYLE || '-'}</h3>
+                                    <span class="${badgeClass}">${badgeText}</span>
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-lg mb-1 truncate">${item.STYLE || '-'}</h3>
-                                <div class="flex flex-wrap gap-3 text-sm text-slate-600">
-                                    ${item.CLIENT ? `<span><i class="fas fa-user text-slate-400 mr-1"></i>${item.CLIENT}</span>` : ''}
-                                    ${item['SAMPLE NO'] ? `<span><i class="fas fa-tag text-slate-400 mr-1"></i>${item['SAMPLE NO']}</span>` : ''}
-                                    ${item.SIZE ? `<span><i class="fas fa-ruler text-slate-400 mr-1"></i>${item.SIZE}</span>` : ''}
-                                    ${item.QTY ? `<span><i class="fas fa-box text-slate-400 mr-1"></i>${item.QTY} ${item.UNIT || 'PCS'}</span>` : ''}
+                                <div class="flex flex-wrap gap-3 text-sm" style="color: var(--text-secondary);">
+                                    ${item.CLIENT ? `<span>${item.CLIENT}</span>` : ''}
+                                    ${item['SAMPLE NO'] ? `<span>• ${item['SAMPLE NO']}</span>` : ''}
+                                    ${item.SIZE ? `<span>• Size ${item.SIZE}</span>` : ''}
+                                    ${item.QTY ? `<span>• ${item.QTY} ${item.UNIT || 'PCS'}</span>` : ''}
                                 </div>
+                                ${!isAvailable && item.PEMINJAM ? 
+                                    `<div class="mt-2 text-sm" style="color: var(--warning);">
+                                        <i class="fas fa-user mr-1"></i>Dipinjam oleh: ${item.PEMINJAM}
+                                    </div>` : ''}
                             </div>
-                            <div class="flex flex-col items-end gap-2">
-                                <i class="fas fa-chevron-right text-slate-400"></i>
-                                ${item.DATE ? `<span class="text-xs text-slate-500">${formatDate(item.DATE)}</span>` : ''}
-                            </div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                         </div>
-                        ${!isAvailable && item.PEMINJAM ? 
-                            `<div class="mt-3 pt-3 border-t border-slate-100">
-                                <p class="text-xs text-slate-500">Peminjam: <span class="font-semibold text-slate-700">${item.PEMINJAM}</span></p>
-                            </div>` : ''}
                     </div>
                 `;
             }).join('');
         }
 
-        // === MODAL: DETAIL ===
         function openDetailModal(index) {
             currentItem = allData.find(item => item.originalIndex === index);
             if (!currentItem) return;
             
             document.getElementById('detailStyle').textContent = currentItem.STYLE || '-';
-            document.getElementById('detailClient').textContent = currentItem.CLIENT || 'Client tidak tercatat';
             document.getElementById('detailTempat').textContent = currentItem.TEMPAT || '-';
+            document.getElementById('detailClient').textContent = currentItem.CLIENT || 'Tidak ada client';
             document.getElementById('detailSample').textContent = currentItem['SAMPLE NO'] || '-';
             document.getElementById('detailSize').textContent = currentItem.SIZE || '-';
             document.getElementById('detailQty').textContent = `${currentItem.QTY || '-'} ${currentItem.UNIT || 'PCS'}`;
@@ -627,13 +762,20 @@
             const borrower = document.getElementById('borrowerName').value.trim();
             
             if (status === 'Dipinjam' && !borrower) {
-                Swal.fire('Perhatian', 'Nama peminjam wajib diisi!', 'warning');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: 'Nama peminjam wajib diisi!',
+                    background: '#27272a',
+                    color: '#fafafa',
+                    confirmButtonColor: '#3b82f6'
+                });
                 return;
             }
             
             const btn = document.getElementById('btnSaveStatus');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Menyimpan...';
+            btn.innerHTML = '<i class="fas fa-spinner" style="animation: spin 0.8s linear infinite"></i> Menyimpan...';
             btn.disabled = true;
             
             try {
@@ -651,13 +793,23 @@
                 closeDetailModal();
                 Swal.fire({
                     icon: 'success',
-                    title: 'Status Berhasil Diupdate',
+                    title: 'Berhasil',
+                    text: 'Status telah diupdate',
                     timer: 1500,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    background: '#27272a',
+                    color: '#fafafa'
                 });
                 fetchData();
             } catch (error) {
-                Swal.fire('Error', 'Gagal mengupdate status', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal mengupdate status',
+                    background: '#27272a',
+                    color: '#fafafa',
+                    confirmButtonColor: '#3b82f6'
+                });
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -669,27 +821,27 @@
             const itemLogs = logsData.filter(l => l.STYLE === styleName).reverse();
             
             if (itemLogs.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-400 italic">Belum ada riwayat tercatat</p>';
+                container.innerHTML = '<p class="text-sm" style="color: var(--text-secondary);">Belum ada riwayat</p>';
                 return;
             }
             
             container.innerHTML = itemLogs.map(log => {
                 const date = new Date(log.WAKTU).toLocaleString('id-ID', {
-                    day: 'numeric',
+                    day: '2-digit',
                     month: 'short',
                     year: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
                 });
                 const isPinjam = log.AKSI === 'Dipinjam';
-                const dotColor = isPinjam ? 'bg-amber-400' : 'bg-emerald-400';
+                const dotColor = isPinjam ? 'var(--warning)' : 'var(--success)';
                 
                 return `
                     <div class="relative pb-4">
-                        <div class="absolute -left-[25px] top-1.5 w-3 h-3 rounded-full ${dotColor} ring-4 ring-white"></div>
-                        <p class="text-xs text-slate-400 font-mono mb-1">${date}</p>
-                        <p class="text-sm font-bold text-slate-800">${log.AKSI}${log.PEMINJAM ? ' oleh ' + log.PEMINJAM : ''}</p>
-                        ${log.KETERANGAN ? `<p class="text-xs text-slate-500 mt-1">${log.KETERANGAN}</p>` : ''}
+                        <div style="position: absolute; left: -20px; top: 4px; width: 8px; height: 8px; border-radius: 50%; background: ${dotColor};"></div>
+                        <p class="text-xs mb-1" style="color: var(--text-secondary);">${date}</p>
+                        <p class="text-sm font-medium">${log.AKSI}${log.PEMINJAM ? ' oleh ' + log.PEMINJAM : ''}</p>
+                        ${log.KETERANGAN ? `<p class="text-xs mt-1" style="color: var(--text-secondary);">${log.KETERANGAN}</p>` : ''}
                     </div>
                 `;
             }).join('');
@@ -702,9 +854,11 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                cancelButtonColor: '#52525b',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                background: '#27272a',
+                color: '#fafafa'
             });
             
             if (!result.isConfirmed) return;
@@ -722,14 +876,27 @@
                 });
                 
                 closeDetailModal();
-                Swal.fire('Terhapus!', 'Barang telah dihapus dari database', 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Terhapus',
+                    text: 'Barang telah dihapus',
+                    background: '#27272a',
+                    color: '#fafafa',
+                    confirmButtonColor: '#3b82f6'
+                });
                 fetchData();
             } catch (error) {
-                Swal.fire('Error', 'Gagal menghapus barang', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal menghapus barang',
+                    background: '#27272a',
+                    color: '#fafafa',
+                    confirmButtonColor: '#3b82f6'
+                });
             }
         }
 
-        // === MODAL: ADD/EDIT FORM ===
         function openAddModal() {
             document.getElementById('formTitle').textContent = 'Tambah Barang Baru';
             document.getElementById('itemForm').reset();
@@ -772,7 +939,7 @@
             
             const btn = document.getElementById('btnFormSubmit');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Menyimpan...';
+            btn.innerHTML = '<i class="fas fa-spinner" style="animation: spin 0.8s linear infinite"></i> Menyimpan...';
             btn.disabled = true;
             
             const payload = {
@@ -797,26 +964,35 @@
                 closeFormModal();
                 Swal.fire({
                     icon: 'success',
-                    title: isEdit ? 'Data Berhasil Diperbarui' : 'Barang Berhasil Ditambahkan',
+                    title: 'Berhasil',
+                    text: isEdit ? 'Data berhasil diperbarui' : 'Barang berhasil ditambahkan',
                     timer: 1500,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    background: '#27272a',
+                    color: '#fafafa'
                 });
                 fetchData();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', 'Gagal menyimpan data', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Gagal menyimpan data',
+                    background: '#27272a',
+                    color: '#fafafa',
+                    confirmButtonColor: '#3b82f6'
+                });
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
-        // === UTILITY FUNCTIONS ===
         function formatDate(dateString) {
             if (!dateString || dateString === '-') return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('id-ID', {
-                day: 'numeric',
+                day: '2-digit',
                 month: 'short',
                 year: 'numeric'
             });
