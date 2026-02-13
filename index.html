@@ -3,70 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gudang Sample</title>
+    <title>Gudang Sample - R&D Gagaclo</title>
+    
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👕</text></svg>">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
         tailwind.config = {
             theme: {
-                fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                fontFamily: { sans: ['"Inter"', 'sans-serif'] },
                 extend: {
                     colors: {
-                        primary: '#4338ca', // Indigo 700
-                        secondary: '#059669', // Emerald 600
-                        background: '#F8FAFC'
+                        primary: '#6366f1',
+                        secondary: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
                     }
                 }
             }
         }
     </script>
+    
     <style>
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); }
-        .animate-slide-up { animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        /* ... css scrollbar yang lama biarkan saja ... */
-
-        /* CSS BARU: Skala Layar */
-        html {
-            font-size: 16px; /* Ukuran Standar untuk Monitor 1080p */
-        }
-
-        /* Jika layar lebar kurang dari 1400px (Laptop/Monitor 720p) */
-        @media (max-width: 1400px) {
-            html {
-                font-size: 13px; /* Kecilkan skala jadi 80% */
-            }
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Smooth animations */
+        * { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+        
+        /* Glass effect */
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        .animate-slideUp { animation: slideUp 0.3s ease-out; }
+        .animate-slideDown { animation: slideDown 0.3s ease-out; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        
+        /* Status badges */
+        .badge-available { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .badge-borrowed { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        
+        /* Responsive font sizing */
+        html { font-size: 16px; }
+        @media (max-width: 1400px) { html { font-size: 14px; } }
+        @media (max-width: 768px) { html { font-size: 13px; } }
     </style>
 </head>
-<body class="bg-background text-slate-800 min-h-screen pb-20">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
 
     <!-- NAVBAR -->
-    <nav class="glass-header border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+    <nav class="glass border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo & Title -->
                 <div class="flex items-center gap-3">
-                    <div class="bg-primary text-white p-2 rounded-xl shadow-lg shadow-indigo-500/20">
-                        <i class="fas fa-tshirt text-lg"></i>
+                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-2.5 rounded-xl shadow-lg">
+                        <i class="fas fa-tshirt text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg leading-tight text-slate-900">Gudang Sample</h1>
-                        <p class="text-xs text-slate-500">R&D Management System</p>
+                        <h1 class="font-bold text-lg text-slate-900">Gudang Sample</h1>
+                        <p class="text-xs text-slate-500">R&D Gagaclo</p>
                     </div>
                 </div>
+                
+                <!-- Actions -->
                 <div class="flex items-center gap-2">
-                    <button onclick="openAddModal()" class="bg-primary text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-indigo-800 transition shadow-lg shadow-indigo-500/20 flex items-center gap-2">
-                        <i class="fas fa-plus"></i> <span class="hidden sm:inline">Input Barang</span>
+                    <button onclick="openAddModal()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium shadow-lg shadow-indigo-500/30 flex items-center gap-2">
+                        <i class="fas fa-plus"></i>
+                        <span class="hidden sm:inline">Tambah</span>
                     </button>
-                    <button onclick="fetchData()" class="bg-white border border-slate-200 text-slate-600 hover:text-primary hover:border-primary p-2.5 rounded-xl transition">
+                    <button onclick="fetchData()" 
+                        class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 p-2.5 rounded-lg">
                         <i class="fas fa-sync-alt" id="refreshIcon"></i>
                     </button>
                 </div>
@@ -75,644 +104,677 @@
     </nav>
 
     <!-- MAIN CONTENT -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-
-        <!-- 1. DASHBOARD STATS -->
-        <div class="grid grid-cols-3 gap-4 mb-8 animate-slide-up">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg shadow-blue-500/20">
-                <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">Total Aset</p>
-                <h3 class="text-3xl font-bold" id="statTotal">0</h3>
-                <p class="text-xs text-blue-100 mt-1 opacity-80">Item terdaftar</p>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- STATS DASHBOARD -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 animate-slideDown">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium mb-1">Total Aset</p>
+                        <h3 class="text-3xl font-bold" id="statTotal">0</h3>
+                        <p class="text-xs text-blue-100 mt-1">Item terdaftar</p>
+                    </div>
+                    <div class="bg-white/20 p-3 rounded-lg">
+                        <i class="fas fa-database text-2xl"></i>
+                    </div>
+                </div>
             </div>
-            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-500/20">
-                <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Tersedia</p>
-                <h3 class="text-3xl font-bold" id="statAvailable">0</h3>
-                <p class="text-xs text-emerald-100 mt-1 opacity-80">Barang di lemari</p>
-            </div>
-            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-5 text-white shadow-lg shadow-amber-500/20">
-                <p class="text-amber-100 text-xs font-bold uppercase tracking-wider mb-1">Dipinjam</p>
-                <h3 class="text-3xl font-bold" id="statBorrowed">0</h3>
-                <p class="text-xs text-amber-100 mt-1 opacity-80">Di produksi</p>
-            </div>
-        </div>
-
-        <!-- 2. TABS & SEARCH -->
-        <div class="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between">
-            <div class="flex bg-slate-200 p-1 rounded-xl w-full md:w-auto">
-                <button onclick="switchTab('search')" id="tab-search" class="px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all"><i class="fas fa-search mr-2"></i>Cari</button>
-                <button onclick="switchTab('cabinets')" id="tab-cabinets" class="px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all"><i class="fas fa-th-large mr-2"></i>Lemari</button>
-            </div>
-            <div class="relative w-full md:w-96">
-                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                <input type="text" id="searchInput" class="w-full bg-white border border-slate-200 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 font-medium" placeholder="Ketik Style..." onkeyup="filterByStyle()">
-            </div>
-        </div>
-
-        <!-- 3. AREA TAMPILAN DATA -->
-        <div class="space-y-6 pb-12 mt-6">
             
-            <!-- A. TAMPILAN DEFAULT (Barang Terakhir) -->
-            <div id="view-default" class="animate-fade-in">
-                <div class="flex items-center gap-2 mb-6 px-1">
-                    <div class="bg-indigo-100 text-primary p-2 rounded-lg">
-                        <i class="fas fa-history"></i>
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-emerald-100 text-sm font-medium mb-1">Tersedia</p>
+                        <h3 class="text-3xl font-bold" id="statAvailable">0</h3>
+                        <p class="text-xs text-emerald-100 mt-1">Di lemari</p>
                     </div>
-                    <h2 class="font-bold text-slate-700 text-lg">Barang Terakhir Masuk</h2>
+                    <div class="bg-white/20 p-3 rounded-lg">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-5 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-amber-100 text-sm font-medium mb-1">Dipinjam</p>
+                        <h3 class="text-3xl font-bold" id="statBorrowed">0</h3>
+                        <p class="text-xs text-amber-100 mt-1">Di produksi</p>
+                    </div>
+                    <div class="bg-white/20 p-3 rounded-lg">
+                        <i class="fas fa-hand-holding text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER & SEARCH -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <!-- Search -->
+                <div class="flex-1">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
+                        <input type="text" id="searchInput" 
+                            placeholder="Cari berdasarkan style, client, atau sample no..." 
+                            class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            onkeyup="performSearch()">
+                    </div>
                 </div>
                 
-                <div id="recentListContainer" class="grid gap-4"></div>
+                <!-- Filter Status -->
+                <div class="flex gap-2">
+                    <button onclick="filterByStatus('all')" id="filter-all" 
+                        class="px-4 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        Semua
+                    </button>
+                    <button onclick="filterByStatus('tersedia')" id="filter-tersedia" 
+                        class="px-4 py-2.5 rounded-lg font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
+                        Tersedia
+                    </button>
+                    <button onclick="filterByStatus('dipinjam')" id="filter-dipinjam" 
+                        class="px-4 py-2.5 rounded-lg font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
+                        Dipinjam
+                    </button>
+                </div>
                 
-                <div class="text-center mt-8 pt-4 border-t border-slate-100">
-                    <button onclick="switchTab('cabinets')" class="inline-flex items-center gap-2 text-slate-500 hover:text-primary text-sm font-bold transition-colors px-4 py-2 rounded-lg hover:bg-slate-50">
-                        Lihat semua di Menu Lemari <i class="fas fa-arrow-right"></i>
-                    </button>
+                <!-- Cabinet Filter -->
+                <select id="cabinetFilter" onchange="filterByCabinet()" 
+                    class="px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Semua Lemari</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- DATA LIST -->
+        <div class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-slate-800" id="listTitle">Semua Barang</h2>
+                <span id="resultCount" class="bg-slate-100 text-slate-600 text-sm font-medium px-3 py-1 rounded-full">
+                    0 item
+                </span>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingState" class="hidden bg-white rounded-xl border border-slate-200 p-12">
+                <div class="flex flex-col items-center justify-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-600 mb-4"></div>
+                    <p class="text-slate-500 font-medium">Memuat data...</p>
                 </div>
             </div>
-
-            <!-- B. TAMPILAN HASIL PENCARIAN (Awalnya Hidden) -->
-            <div id="view-search-results" class="hidden">
-                <div class="flex items-center justify-between px-1 mb-4">
-                    <h2 class="font-bold text-slate-700 text-lg">Hasil Pencarian</h2>
-                    <span id="resultCount" class="bg-slate-200 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">0 Ditemukan</span>
-                </div>
-                <div id="searchListContainer" class="grid gap-4"></div>
-            </div>
-
-            <!-- C. TAMPILAN LEMARI (YANG HILANG TADI SAYA KEMBALIKAN) -->
-            <div id="view-cabinets" class="hidden">
-                <div class="flex items-center gap-2 mb-6 px-1">
-                    <div class="bg-indigo-100 text-primary p-2 rounded-lg">
-                        <i class="fas fa-th-large"></i>
-                    </div>
-                    <h2 class="font-bold text-slate-700 text-lg">Pilih Lokasi Penyimpanan</h2>
-                </div>
-
-                <div id="cabinetGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4"></div>
-
-                <div id="cabinetDetailArea" class="hidden">
-                    <button onclick="closeCabinetDetail()" class="mb-6 text-slate-500 hover:text-primary font-bold flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition">
-                        <i class="fas fa-arrow-left"></i> Kembali ke Rak
-                    </button>
-                    <div class="flex items-center gap-2 mb-4 px-1">
-                        <div class="bg-slate-800 text-white p-2 rounded-lg">
-                            <span class="font-bold text-lg" id="selectedCabinetName">-</span>
-                        </div>
-                        <h2 class="font-bold text-slate-700 text-lg">Daftar Barang</h2>
-                    </div>
-                    <div id="cabinetListContainer" class="grid gap-4"></div>
+            
+            <!-- Items Container -->
+            <div id="itemsContainer" class="space-y-3"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden bg-white rounded-xl border border-slate-200 p-12">
+                <div class="text-center">
+                    <i class="fas fa-box-open text-5xl text-slate-300 mb-4"></i>
+                    <h3 class="text-lg font-bold text-slate-700 mb-2">Tidak ada data</h3>
+                    <p class="text-slate-500">Belum ada barang yang terdaftar atau tidak ditemukan hasil pencarian</p>
                 </div>
             </div>
-
         </div>
     </main>
 
-    <!-- LOADING -->
-    <div id="loader" class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col justify-center items-center">
-        <div class="w-16 h-16 border-4 border-indigo-100 border-t-primary rounded-full animate-spin mb-4"></div>
-        <p class="text-slate-600 font-bold animate-pulse">Menghubungkan Database...</p>
-    </div>
-
-    <!-- MODAL DETAIL / UPDATE STATUS -->
-    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg transform transition-all scale-100 overflow-hidden flex flex-col max-h-[90vh]">
-            <!-- Header Modal -->
-            <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
-                <h3 class="text-lg font-bold text-slate-800">Detail Barang</h3>
-                <div class="flex gap-2">
-                    <button onclick="deleteItem()" class="text-red-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition" title="Hapus Barang"><i class="fas fa-trash-alt"></i></button>
-                    <button onclick="editItemMode()" class="text-blue-400 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit Detail"><i class="fas fa-edit"></i></button>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition"><i class="fas fa-times text-xl"></i></button>
+    <!-- MODAL: Detail Item -->
+    <div id="modalDetail" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp">
+            <!-- Header -->
+            <div class="sticky top-0 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-6 rounded-t-2xl">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-1" id="detailStyle">-</h2>
+                        <p class="text-indigo-100 text-sm" id="detailClient">-</p>
+                    </div>
+                    <button onclick="closeDetailModal()" class="text-white hover:bg-white/20 p-2 rounded-lg">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
                 </div>
             </div>
-
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <!-- Info Utama -->
-                <div class="flex justify-between items-start mb-6">
+            
+            <!-- Content -->
+            <div class="p-6 space-y-6">
+                <!-- Status Card -->
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-3">Status Barang</label>
+                    <div class="flex items-center gap-3 mb-3">
+                        <select id="statusSelect" onchange="toggleBorrowerInput()" 
+                            class="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="Tersedia">✅ Tersedia di Lemari</option>
+                            <option value="Dipinjam">📦 Sedang Dipinjam</option>
+                        </select>
+                        <button onclick="saveStatus()" id="btnSaveStatus" 
+                            class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">
+                            <i class="fas fa-save mr-2"></i>Update
+                        </button>
+                    </div>
+                    
+                    <!-- Borrower Input (conditional) -->
+                    <div id="borrowerInputDiv" class="hidden">
+                        <input type="text" id="borrowerName" placeholder="Nama peminjam / departemen" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                
+                <!-- Details Grid -->
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span id="modalTempat" class="bg-slate-800 text-white text-xs font-bold px-2 py-0.5 rounded">1A</span>
-                            <span id="modalClient" class="text-xs font-bold text-slate-400 uppercase">CLIENT</span>
-                        </div>
-                        <h2 id="modalStyle" class="text-3xl font-bold text-primary leading-tight">7176</h2>
-                        <p id="modalSample" class="text-slate-500 font-medium text-sm mt-1">Sample No: -</p>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Lokasi</label>
+                        <p class="text-sm font-semibold text-slate-800" id="detailTempat">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Sample No</label>
+                        <p class="text-sm font-semibold text-slate-800" id="detailSample">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Size</label>
+                        <p class="text-sm font-semibold text-slate-800" id="detailSize">-</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Quantity</label>
+                        <p class="text-sm font-semibold text-slate-800" id="detailQty">-</p>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Tanggal Masuk</label>
+                        <p class="text-sm font-semibold text-slate-800" id="detailDate">-</p>
                     </div>
                 </div>
-
-                <!-- Tabs Internal -->
-                <div class="flex border-b border-slate-200 mb-6">
-                    <button onclick="switchModalTab('info')" id="mtab-info" class="flex-1 pb-3 text-sm font-bold text-primary border-b-2 border-primary transition">Status & Info</button>
-                    <button onclick="switchModalTab('history')" id="mtab-history" class="flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition">Riwayat Log</button>
-                </div>
-
-                <!-- CONTENT: INFO & STATUS -->
-                <div id="mview-info" class="space-y-6">
-                    <div class="grid grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <div><p class="text-[10px] uppercase font-bold text-slate-400">Size</p><p id="modalSize" class="font-bold text-slate-700 text-lg">-</p></div>
-                        <div><p class="text-[10px] uppercase font-bold text-slate-400">Qty</p><p id="modalQty" class="font-bold text-slate-700 text-lg">-</p></div>
-                        <div><p class="text-[10px] uppercase font-bold text-slate-400">Tgl Masuk</p><p id="modalDate" class="font-bold text-slate-700 text-sm mt-1">-</p></div>
-                    </div>
-                    <div class="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
-                        <label class="block text-xs font-bold text-indigo-900 uppercase mb-3">Update Status Ketersediaan</label>
-                        <div class="space-y-3">
-                            <select id="statusSelect" onchange="toggleBorrowerInput()" class="w-full rounded-xl border-slate-200 p-3 font-semibold text-slate-700 focus:ring-2 focus:ring-primary">
-                                <option value="Tersedia">✅ Tersedia (Di Lemari)</option>
-                                <option value="Dipinjam">⚠️ Dipinjam Produksi</option>
-                            </select>
-                            <div id="borrowerInputDiv" class="hidden">
-                                <input type="text" id="borrowerName" class="w-full rounded-xl border-slate-200 p-3 font-medium focus:ring-2 focus:ring-primary" placeholder="Tulis Nama Peminjam...">
-                            </div>
-                            <button onclick="saveStatus()" id="btnSave" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-indigo-800 transition shadow-lg shadow-indigo-500/20">Simpan Perubahan Status</button>
-                        </div>
+                
+                <!-- History Timeline -->
+                <div>
+                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <i class="fas fa-history text-indigo-600"></i>
+                        Riwayat Status
+                    </h3>
+                    <div class="border-l-2 border-slate-200 pl-6 space-y-4" id="logContainer">
+                        <p class="text-sm text-slate-400 italic">Memuat riwayat...</p>
                     </div>
                 </div>
-
-                <!-- CONTENT: HISTORY LOGS -->
-                <div id="mview-history" class="hidden">
-                    <div id="logContainer" class="space-y-4 relative pl-4 border-l-2 border-slate-200 ml-2"></div>
+                
+                <!-- Action Buttons -->
+                <div class="flex gap-3 pt-4 border-t border-slate-200">
+                    <button onclick="editItemMode()" 
+                        class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">
+                        <i class="fas fa-edit mr-2"></i>Edit Detail
+                    </button>
+                    <button onclick="deleteItem()" 
+                        class="flex-1 px-4 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium">
+                        <i class="fas fa-trash mr-2"></i>Hapus
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL INPUT/EDIT (Reusable) -->
-    <div id="modalFormOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800" id="formTitle">Input Barang Baru</h3>
-                <button onclick="closeFormModal()" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+    <!-- MODAL: Add/Edit Form -->
+    <div id="modalForm" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp">
+            <!-- Header -->
+            <div class="sticky top-0 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-6 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold" id="formTitle">Tambah Barang Baru</h2>
+                    <button onclick="closeFormModal()" class="text-white hover:bg-white/20 p-2 rounded-lg">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
             </div>
-            <form id="itemForm" onsubmit="submitItemForm(event)" class="space-y-4">
+            
+            <!-- Form -->
+            <form onsubmit="submitItemForm(event)" id="itemForm" class="p-6 space-y-4">
                 <input type="hidden" id="editRowIndex">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Style Barang <span class="text-red-500">*</span></label>
-                        <input type="text" id="inStyle" required class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary transition font-bold text-slate-800" placeholder="Contoh: 7176">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Style -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Style Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="inStyle" required 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="e.g., DELTA TECH OPS VEST">
                     </div>
+                    
+                    <!-- Client -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Client</label>
-                        <input type="text" id="inClient" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Client</label>
+                        <input type="text" id="inClient" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="e.g., AN05">
                     </div>
+                    
+                    <!-- Lokasi/Tempat -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lokasi Rak <span class="text-red-500">*</span></label>
-                        <input type="text" id="inTempat" required class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary" placeholder="1A">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Lokasi Lemari <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="inTempat" required 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="e.g., C5B, A1A">
                     </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sample No</label>
-                        <input type="text" id="inSample" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
+                    
+                    <!-- Sample No -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Sample No</label>
+                        <input type="text" id="inSample" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="e.g., RK01">
                     </div>
-                    <div class="grid grid-cols-3 gap-3 col-span-2">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Size</label>
-                            <input type="text" id="inSize" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Qty</label>
-                            <input type="number" id="inQty" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Unit</label>
-                            <select id="inUnit" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
-                                <option value="PCS">PCS</option>
-                                <option value="SET">SET</option>
-                            </select>
-                        </div>
+                    
+                    <!-- Size -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Size</label>
+                        <input type="text" id="inSize" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="e.g., M, L, XL">
                     </div>
-                    <div class="col-span-2">
-                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tanggal</label>
-                         <input type="date" id="inDate" class="w-full rounded-xl border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary">
+                    
+                    <!-- Quantity -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Qty</label>
+                        <input type="number" id="inQty" min="1" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                            placeholder="1">
+                    </div>
+                    
+                    <!-- Unit -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Unit</label>
+                        <select id="inUnit" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="PCS">PCS</option>
+                            <option value="SET">SET</option>
+                            <option value="PACK">PACK</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Date -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Tanggal Masuk</label>
+                        <input type="date" id="inDate" 
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
-                <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="closeFormModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl">Batal</button>
-                    <button type="submit" id="btnFormSubmit" class="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-indigo-800 shadow-lg shadow-indigo-500/30">Simpan Data</button>
+                
+                <!-- Submit Button -->
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeFormModal()" 
+                        class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnFormSubmit" 
+                        class="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">
+                        <i class="fas fa-save mr-2"></i>Simpan Data
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- LOGIC SCRIPT -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- JAVASCRIPT -->
     <script>
-        // ==========================================
-        // CONFIG
-        // ==========================================
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2NfqskzykTX38TOZ8l3O2UNxrMRFIjSxtvVPiWt_36LVy0fUaZqPa08-6IslOeXZ33g/exec"; 
-        // ==========================================
-
-        let inventoryData = [];
+        // === CONFIGURATION ===
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbykDMMuhXxj1Y8Eag7xsgm5FtmFU1BQWQHM1NWF_T3uH_I5CeQq3C2_fJKVbVWkpq9y/exec';
+        
+        let allData = [];
         let logsData = [];
-        let allCabinets = [];
+        let filteredData = [];
         let currentItem = null;
+        let currentStatusFilter = 'all';
+        let currentSearchQuery = '';
+        let currentCabinetFilter = '';
 
+        // === INITIALIZATION ===
         document.addEventListener('DOMContentLoaded', () => {
             fetchData();
+            document.getElementById('inDate').valueAsDate = new Date();
         });
 
-        // --- FETCH DATA ---
+        // === DATA FETCHING ===
         async function fetchData() {
-            const loader = document.getElementById('loader');
             const icon = document.getElementById('refreshIcon');
+            icon.classList.add('animate-spin');
+            showLoading();
             
-            loader.classList.remove('hidden');
-            icon.classList.add('fa-spin');
-
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
-                const json = await response.json();
+                const data = await response.json();
                 
-                // Normalisasi Data (Anti-Crash)
-                let rawInventory = [];
-                let rawLogs = [];
-
-                if (Array.isArray(json)) {
-                    rawInventory = json;
-                } else if (json.inventory) {
-                    rawInventory = json.inventory;
-                    rawLogs = json.logs || [];
-                }
-
-                // Process Inventory
-                inventoryData = rawInventory.map(item => {
-                    const norm = {};
-                    for (let key in item) { norm[key.toUpperCase().trim()] = item[key]; }
-                    norm['originalIndex'] = item.rowIndex;
-                    return norm;
-                });
-
-                // Process Logs
-                logsData = rawLogs.map(log => {
-                     const norm = {};
-                     for (let key in log) { norm[key.toUpperCase().trim()] = log[key]; }
-                     return norm;
-                });
-
-                allCabinets = [...new Set(inventoryData.map(i => i['TEMPAT']))].filter(c => c).sort();
+                allData = data.data || [];
+                logsData = data.logs || [];
                 
-                updateDashboard();
-                renderCabinetGrid(); // Siapkan grid lemari
-
-                // Logic Render Default
-                if(document.getElementById('recentListContainer')) {
-                    renderRecentList(inventoryData);
-                    document.getElementById('view-default').classList.remove('hidden');
-                    document.getElementById('view-search-results').classList.add('hidden');
-                    document.getElementById('view-cabinets').classList.add('hidden');
-                } else {
-                    renderSearchList(inventoryData);
-                }
-                
+                updateStats();
+                populateCabinetFilter();
+                applyFilters();
             } catch (error) {
-                console.error(error);
-                if(inventoryData.length === 0) Swal.fire('Error', 'Gagal terhubung ke database', 'error');
+                console.error('Error fetching data:', error);
+                Swal.fire('Error', 'Gagal memuat data dari server', 'error');
             } finally {
-                loader.classList.add('hidden');
-                icon.classList.remove('fa-spin');
+                icon.classList.remove('animate-spin');
+                hideLoading();
             }
         }
 
-        // --- CARD DESIGN (NEW) ---
-        const val = (v) => (v && v.toString().trim() !== "") ? v : "-";
-
-        function createCard(item) {
-            const status = item['STATUS'] || 'Tersedia';
-            const isBorrowed = status === 'Dipinjam';
-            const peminjam = item['PEMINJAM'] || '';
-            const statusClass = isBorrowed ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200';
-            const icon = isBorrowed ? 'fa-user-clock' : 'fa-check-circle';
-            const statusText = isBorrowed ? `Dipinjam: ${peminjam}` : 'Tersedia';
-
-            return `
-            <div class="bg-white rounded-2xl p-4 lg:p-5 shadow-sm border border-slate-200 hover:shadow-lg hover:border-primary/30 transition cursor-pointer group relative" onclick='openModal(${JSON.stringify(item)})'>
-                
-                <div class="absolute top-3 right-3 lg:top-4 lg:right-4">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusClass}">
-                        <i class="fas ${icon}"></i> ${statusText}
-                    </span>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <!-- KOTAK RAK (Responsive: Kecil di 720p, Besar di 1080p) -->
-                    <div class="w-12 h-12 lg:w-16 lg:h-16 rounded-xl bg-slate-800 flex flex-col items-center justify-center text-white shadow-lg shadow-slate-300/50 flex-shrink-0">
-                        <span class="text-[8px] lg:text-[10px] uppercase text-slate-400 font-bold tracking-wider">RAK</span>
-                        <span class="text-xl lg:text-2xl font-black leading-none">${val(item['TEMPAT'])}</span>
-                    </div>
-
-                    <div class="flex-1 min-w-0 py-1">
-                        <p class="text-[10px] lg:text-xs text-slate-500 font-bold uppercase mb-0.5 tracking-wide">${val(item['CLIENT'])}</p>
-                        
-                        <!-- JUDUL STYLE (Responsive Text) -->
-                        <h4 class="text-xl lg:text-3xl font-black text-slate-800 leading-none mb-2 group-hover:text-primary transition truncate">
-                            ${val(item['STYLE'])}
-                        </h4>
-                        
-                        <div class="flex items-center gap-2">
-                            <span class="inline-block bg-slate-100 text-slate-600 text-[10px] lg:text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-slate-200">
-                                Size: ${val(item['SIZE'])}
-                            </span>
-                            <span class="text-[10px] lg:text-xs text-slate-400 border-l border-slate-300 pl-2">
-                                Qty: ${val(item['QTY'])} ${val(item['UNIT'])}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        // --- RENDER FUNCTIONS ---
-        function renderRecentList(data) {
-            const container = document.getElementById('recentListContainer');
-            if(!container) return;
-            container.innerHTML = '';
-            const recentItems = data.slice(-5).reverse(); 
-            if (recentItems.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50"><p>Belum ada data barang.</p></div>`;
-                return;
-            }
-            recentItems.forEach(item => container.innerHTML += createCard(item));
-        }
-
-       function renderSearchList(data) {
-            const container = document.getElementById('searchListContainer');
-            if(!container) return;
-            container.innerHTML = '';
-            document.getElementById('resultCount').innerText = `${data.length} Ditemukan`;
-            if (data.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200"><i class="fas fa-search text-4xl text-slate-300 mb-3"></i><h4 class="text-slate-500 font-bold">Barang tidak ditemukan</h4></div>`;
-                return;
-            }
-            data.forEach(item => container.innerHTML += createCard(item));
-        }
-
-        // --- SEARCH & TABS LOGIC (FIXED) ---
-        function filterByStyle() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
-            const viewDefault = document.getElementById('view-default');
-            const viewSearch = document.getElementById('view-search-results');
-            const viewCabinets = document.getElementById('view-cabinets');
-
-            if (keyword === "") {
-                viewDefault.classList.remove('hidden');
-                viewSearch.classList.add('hidden');
-                viewCabinets.classList.add('hidden');
-                // Reset tab style visual
-                document.getElementById('tab-search').className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
-                document.getElementById('tab-cabinets').className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-                return;
-            }
-
-            // Saat ngetik, paksa masuk mode search
-            viewDefault.classList.add('hidden');
-            viewSearch.classList.remove('hidden');
-            viewCabinets.classList.add('hidden');
-
-            const filtered = inventoryData.filter(item => {
-                const style = item['STYLE'] ? item['STYLE'].toString().toLowerCase() : "";
-                return style.includes(keyword);
-            });
-            renderSearchList(filtered);
-        }
-
-        function switchTab(tabName) {
-            const btnSearch = document.getElementById('tab-search');
-            const btnCab = document.getElementById('tab-cabinets');
-            const viewDefault = document.getElementById('view-default');
-            const viewSearch = document.getElementById('view-search-results');
-            const viewCabinets = document.getElementById('view-cabinets');
-
-            if(tabName === 'search') {
-                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
-                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-                
-                const keyword = document.getElementById('searchInput').value;
-                if(keyword.trim() === "") {
-                    viewDefault.classList.remove('hidden');
-                    viewSearch.classList.add('hidden');
-                } else {
-                    viewDefault.classList.add('hidden');
-                    viewSearch.classList.remove('hidden');
-                }
-                viewCabinets.classList.add('hidden');
-
-            } else {
-                btnCab.className = "px-6 py-2 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-800 transition-all";
-                btnSearch.className = "px-6 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all";
-
-                viewDefault.classList.add('hidden');
-                viewSearch.classList.add('hidden');
-                viewCabinets.classList.remove('hidden');
-                
-                if(document.getElementById('cabinetDetailArea')) document.getElementById('cabinetDetailArea').classList.add('hidden');
-                if(document.getElementById('cabinetGrid')) document.getElementById('cabinetGrid').classList.remove('hidden');
-            }
-        }
-
-        // --- DASHBOARD ---
-        function updateDashboard() {
-            const total = inventoryData.length;
-            const borrowed = inventoryData.filter(i => i['STATUS'] === 'Dipinjam').length;
-            const available = total - borrowed;
-            animateValue("statTotal", 0, total, 1000);
-            animateValue("statAvailable", 0, available, 1000);
-            animateValue("statBorrowed", 0, borrowed, 1000);
-        }
-
-        function animateValue(id, start, end, duration) {
-            let obj = document.getElementById(id);
-            if(!obj) return;
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerHTML = Math.floor(progress * (end - start) + start);
-                if (progress < 1) window.requestAnimationFrame(step);
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        // --- CABINETS ---
-        function renderCabinetGrid() {
-            const grid = document.getElementById('cabinetGrid');
-            grid.innerHTML = '';
-            allCabinets.forEach(loc => {
-                const btn = document.createElement('button');
-                btn.className = "p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-primary hover:text-primary hover:shadow-md transition font-bold text-lg text-slate-600 flex flex-col items-center justify-center gap-1";
-                btn.innerHTML = `<i class="fas fa-archive text-slate-300 text-2xl mb-1"></i> ${loc}`;
-                btn.onclick = () => showCabinetDetail(loc);
-                grid.appendChild(btn);
-            });
-        }
-
-        function showCabinetDetail(location) {
-            document.getElementById('cabinetGrid').classList.add('hidden');
-            document.getElementById('cabinetDetailArea').classList.remove('hidden');
-            document.getElementById('selectedCabinetName').innerText = location;
-            const items = inventoryData.filter(i => i['TEMPAT'] === location);
-            const container = document.getElementById('cabinetListContainer');
-            container.innerHTML = '';
-            items.forEach(item => container.innerHTML += createCard(item));
-        }
-
-        function closeCabinetDetail() {
-            document.getElementById('cabinetDetailArea').classList.add('hidden');
-            document.getElementById('cabinetGrid').classList.remove('hidden');
-        }
-
-        // --- MODAL & ACTIONS ---
-        function openModal(item) {
-            currentItem = item;
-            document.getElementById('modalOverlay').classList.remove('hidden');
+        // === STATS UPDATE ===
+        function updateStats() {
+            const total = allData.length;
+            const available = allData.filter(item => item.STATUS === 'Tersedia').length;
+            const borrowed = allData.filter(item => item.STATUS === 'Dipinjam').length;
             
-            document.getElementById('modalStyle').innerText = val(item['STYLE']);
-            document.getElementById('modalTempat').innerText = val(item['TEMPAT']);
-            document.getElementById('modalClient').innerText = val(item['CLIENT']);
-            document.getElementById('modalSample').innerText = 'Sample: ' + val(item['SAMPLE NO']);
-            document.getElementById('modalSize').innerText = val(item['SIZE']);
-            document.getElementById('modalQty').innerText = `${val(item['QTY'])} ${val(item['UNIT'])}`;
-            const rawDate = val(item['DATE']);
-            document.getElementById('modalDate').innerText = rawDate !== '-' ? new Date(rawDate).toLocaleDateString('id-ID') : '-';
-
-            const currentStatus = item['STATUS'] || 'Tersedia';
-            document.getElementById('statusSelect').value = currentStatus === 'Dipinjam' ? 'Dipinjam' : 'Tersedia';
-            if(currentStatus === 'Dipinjam') {
-                document.getElementById('borrowerName').value = item['PEMINJAM'] || '';
-            } else {
-                document.getElementById('borrowerName').value = '';
-            }
-            toggleBorrowerInput();
-            renderHistoryLogs(item['STYLE']);
-            switchModalTab('info');
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAvailable').textContent = available;
+            document.getElementById('statBorrowed').textContent = borrowed;
         }
 
-        function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
-
-        function switchModalTab(tab) {
-            if(tab === 'info') {
-                document.getElementById('mtab-info').className = "flex-1 pb-3 text-sm font-bold text-primary border-b-2 border-primary transition";
-                document.getElementById('mtab-history').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition";
-                document.getElementById('mview-info').classList.remove('hidden');
-                document.getElementById('mview-history').classList.add('hidden');
-            } else {
-                document.getElementById('mtab-history').className = "flex-1 pb-3 text-sm font-bold text-primary border-b-2 border-primary transition";
-                document.getElementById('mtab-info').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition";
-                document.getElementById('mview-history').classList.remove('hidden');
-                document.getElementById('mview-info').classList.add('hidden');
-            }
+        // === CABINET FILTER POPULATION ===
+        function populateCabinetFilter() {
+            const cabinets = [...new Set(allData.map(item => item.TEMPAT || '').filter(Boolean))].sort();
+            const select = document.getElementById('cabinetFilter');
+            select.innerHTML = '<option value="">Semua Lemari</option>';
+            cabinets.forEach(cabinet => {
+                select.innerHTML += `<option value="${cabinet}">${cabinet}</option>`;
+            });
         }
 
-        function renderHistoryLogs(styleName) {
-            const container = document.getElementById('logContainer');
-            container.innerHTML = '';
-            const itemLogs = logsData.filter(l => l['STYLE'] == styleName).reverse();
-            if(itemLogs.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-400 italic">Belum ada riwayat tercatat.</p>';
+        // === FILTER FUNCTIONS ===
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            updateFilterButtons();
+            applyFilters();
+        }
+
+        function filterByCabinet() {
+            currentCabinetFilter = document.getElementById('cabinetFilter').value;
+            applyFilters();
+        }
+
+        function performSearch() {
+            currentSearchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            applyFilters();
+        }
+
+        function updateFilterButtons() {
+            ['all', 'tersedia', 'dipinjam'].forEach(status => {
+                const btn = document.getElementById(`filter-${status}`);
+                if (status === currentStatusFilter) {
+                    btn.className = 'px-4 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 border border-indigo-200';
+                } else {
+                    btn.className = 'px-4 py-2.5 rounded-lg font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50';
+                }
+            });
+        }
+
+        function applyFilters() {
+            filteredData = allData.filter(item => {
+                // Status filter
+                if (currentStatusFilter !== 'all') {
+                    const status = currentStatusFilter === 'tersedia' ? 'Tersedia' : 'Dipinjam';
+                    if (item.STATUS !== status) return false;
+                }
+                
+                // Cabinet filter
+                if (currentCabinetFilter && item.TEMPAT !== currentCabinetFilter) return false;
+                
+                // Search filter
+                if (currentSearchQuery) {
+                    const searchFields = [
+                        item.STYLE || '',
+                        item.CLIENT || '',
+                        item['SAMPLE NO'] || '',
+                        item.TEMPAT || '',
+                        item.SIZE || ''
+                    ].join(' ').toLowerCase();
+                    
+                    if (!searchFields.includes(currentSearchQuery)) return false;
+                }
+                
+                return true;
+            });
+            
+            renderItems();
+        }
+
+        // === RENDER ITEMS ===
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const resultCount = document.getElementById('resultCount');
+            
+            if (filteredData.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                resultCount.textContent = '0 item';
                 return;
             }
-            itemLogs.forEach(log => {
-                const date = new Date(log['WAKTU']).toLocaleString('id-ID');
-                const isPinjam = log['AKSI'] === 'Dipinjam';
-                const dotColor = isPinjam ? 'bg-amber-400' : 'bg-emerald-400';
-                container.innerHTML += `<div class="relative pb-4"><div class="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full ${dotColor} ring-4 ring-white"></div><p class="text-xs text-slate-400 font-mono mb-0.5">${date}</p><p class="text-sm font-bold text-slate-800">${log['AKSI']} ${log['PEMINJAM'] ? 'oleh ' + log['PEMINJAM'] : ''}</p><p class="text-xs text-slate-500">${log['KETERANGAN'] || ''}</p></div>`;
-            });
+            
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            resultCount.textContent = `${filteredData.length} item`;
+            
+            container.innerHTML = filteredData.map((item, index) => {
+                const isAvailable = item.STATUS === 'Tersedia';
+                const statusBadge = isAvailable 
+                    ? '<span class="badge-available px-2 py-1 rounded-md text-xs font-medium">✅ Tersedia</span>'
+                    : '<span class="badge-borrowed px-2 py-1 rounded-md text-xs font-medium">📦 Dipinjam</span>';
+                
+                return `
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg hover:border-indigo-200 cursor-pointer animate-fadeIn" 
+                         onclick="openDetailModal(${item.originalIndex})" style="animation-delay: ${index * 0.03}s">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="bg-slate-700 text-white px-2 py-1 rounded text-xs font-bold">
+                                        ${item.TEMPAT || 'N/A'}
+                                    </div>
+                                    ${statusBadge}
+                                </div>
+                                <h3 class="font-bold text-slate-900 text-lg mb-1 truncate">${item.STYLE || '-'}</h3>
+                                <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+                                    ${item.CLIENT ? `<span><i class="fas fa-user text-slate-400 mr-1"></i>${item.CLIENT}</span>` : ''}
+                                    ${item['SAMPLE NO'] ? `<span><i class="fas fa-tag text-slate-400 mr-1"></i>${item['SAMPLE NO']}</span>` : ''}
+                                    ${item.SIZE ? `<span><i class="fas fa-ruler text-slate-400 mr-1"></i>${item.SIZE}</span>` : ''}
+                                    ${item.QTY ? `<span><i class="fas fa-box text-slate-400 mr-1"></i>${item.QTY} ${item.UNIT || 'PCS'}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <i class="fas fa-chevron-right text-slate-400"></i>
+                                ${item.DATE ? `<span class="text-xs text-slate-500">${formatDate(item.DATE)}</span>` : ''}
+                            </div>
+                        </div>
+                        ${!isAvailable && item.PEMINJAM ? 
+                            `<div class="mt-3 pt-3 border-t border-slate-100">
+                                <p class="text-xs text-slate-500">Peminjam: <span class="font-semibold text-slate-700">${item.PEMINJAM}</span></p>
+                            </div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // === MODAL: DETAIL ===
+        function openDetailModal(index) {
+            currentItem = allData.find(item => item.originalIndex === index);
+            if (!currentItem) return;
+            
+            document.getElementById('detailStyle').textContent = currentItem.STYLE || '-';
+            document.getElementById('detailClient').textContent = currentItem.CLIENT || 'Client tidak tercatat';
+            document.getElementById('detailTempat').textContent = currentItem.TEMPAT || '-';
+            document.getElementById('detailSample').textContent = currentItem['SAMPLE NO'] || '-';
+            document.getElementById('detailSize').textContent = currentItem.SIZE || '-';
+            document.getElementById('detailQty').textContent = `${currentItem.QTY || '-'} ${currentItem.UNIT || 'PCS'}`;
+            document.getElementById('detailDate').textContent = formatDate(currentItem.DATE);
+            
+            document.getElementById('statusSelect').value = currentItem.STATUS || 'Tersedia';
+            document.getElementById('borrowerName').value = currentItem.PEMINJAM || '';
+            toggleBorrowerInput();
+            
+            renderHistoryLogs(currentItem.STYLE);
+            
+            document.getElementById('modalDetail').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('modalDetail').classList.add('hidden');
         }
 
         function toggleBorrowerInput() {
             const status = document.getElementById('statusSelect').value;
             const div = document.getElementById('borrowerInputDiv');
-            if (status === 'Dipinjam') div.classList.remove('hidden'); else div.classList.add('hidden');
+            div.classList.toggle('hidden', status !== 'Dipinjam');
         }
 
         async function saveStatus() {
-            const rowIndex = currentItem['originalIndex'];
             const status = document.getElementById('statusSelect').value;
-            const borrower = document.getElementById('borrowerName').value;
-            const styleName = currentItem['STYLE'];
-
-            if (status === 'Dipinjam' && !borrower.trim()) { Swal.fire('Oops', 'Nama peminjam wajib diisi!', 'warning'); return; }
-
-            const btn = document.getElementById('btnSave');
-            btn.innerHTML = 'Menyimpan...'; btn.disabled = true;
-
+            const borrower = document.getElementById('borrowerName').value.trim();
+            
+            if (status === 'Dipinjam' && !borrower) {
+                Swal.fire('Perhatian', 'Nama peminjam wajib diisi!', 'warning');
+                return;
+            }
+            
+            const btn = document.getElementById('btnSaveStatus');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Menyimpan...';
+            btn.disabled = true;
+            
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'updateStatus', rowIndex, status, borrower, styleName })
+                    body: JSON.stringify({
+                        action: 'updateStatus',
+                        rowIndex: currentItem.originalIndex,
+                        status: status,
+                        borrower: borrower,
+                        styleName: currentItem.STYLE
+                    })
                 });
-                closeModal();
-                Swal.fire({ icon: 'success', title: 'Status Diupdate', timer: 1500, showConfirmButton: false });
+                
+                closeDetailModal();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Status Berhasil Diupdate',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
                 fetchData();
             } catch (error) {
-                Swal.fire('Error', 'Gagal update status', 'error');
+                Swal.fire('Error', 'Gagal mengupdate status', 'error');
             } finally {
-                btn.innerHTML = 'Simpan Perubahan Status'; btn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
+        }
+
+        function renderHistoryLogs(styleName) {
+            const container = document.getElementById('logContainer');
+            const itemLogs = logsData.filter(l => l.STYLE === styleName).reverse();
+            
+            if (itemLogs.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-400 italic">Belum ada riwayat tercatat</p>';
+                return;
+            }
+            
+            container.innerHTML = itemLogs.map(log => {
+                const date = new Date(log.WAKTU).toLocaleString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                const isPinjam = log.AKSI === 'Dipinjam';
+                const dotColor = isPinjam ? 'bg-amber-400' : 'bg-emerald-400';
+                
+                return `
+                    <div class="relative pb-4">
+                        <div class="absolute -left-[25px] top-1.5 w-3 h-3 rounded-full ${dotColor} ring-4 ring-white"></div>
+                        <p class="text-xs text-slate-400 font-mono mb-1">${date}</p>
+                        <p class="text-sm font-bold text-slate-800">${log.AKSI}${log.PEMINJAM ? ' oleh ' + log.PEMINJAM : ''}</p>
+                        ${log.KETERANGAN ? `<p class="text-xs text-slate-500 mt-1">${log.KETERANGAN}</p>` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         async function deleteItem() {
             const result = await Swal.fire({
                 title: 'Hapus Barang?',
-                text: "Data yang dihapus tidak bisa dikembalikan!",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal'
             });
-
-            if (result.isConfirmed) {
-                const rowIndex = currentItem['originalIndex'];
-                const styleName = currentItem['STYLE'];
-                Swal.showLoading();
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({ action: 'deleteItem', rowIndex, styleName })
-                    });
-                    closeModal();
-                    Swal.fire('Terhapus!', 'Barang telah dihapus.', 'success');
-                    fetchData();
-                } catch (error) {
-                    Swal.fire('Gagal', 'Terjadi kesalahan saat menghapus', 'error');
-                }
+            
+            if (!result.isConfirmed) return;
+            
+            Swal.showLoading();
+            
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'deleteItem',
+                        rowIndex: currentItem.originalIndex,
+                        styleName: currentItem.STYLE
+                    })
+                });
+                
+                closeDetailModal();
+                Swal.fire('Terhapus!', 'Barang telah dihapus dari database', 'success');
+                fetchData();
+            } catch (error) {
+                Swal.fire('Error', 'Gagal menghapus barang', 'error');
             }
         }
 
+        // === MODAL: ADD/EDIT FORM ===
         function openAddModal() {
-            document.getElementById('formTitle').innerText = "Input Barang Baru";
+            document.getElementById('formTitle').textContent = 'Tambah Barang Baru';
             document.getElementById('itemForm').reset();
-            document.getElementById('editRowIndex').value = "";
+            document.getElementById('editRowIndex').value = '';
             document.getElementById('inDate').valueAsDate = new Date();
-            document.getElementById('modalFormOverlay').classList.remove('hidden');
+            document.getElementById('modalForm').classList.remove('hidden');
         }
 
         function editItemMode() {
-            closeModal();
-            document.getElementById('formTitle').innerText = "Edit Detail Barang";
-            document.getElementById('editRowIndex').value = currentItem['originalIndex'];
-            document.getElementById('inStyle').value = val(currentItem['STYLE']) !== '-' ? currentItem['STYLE'] : '';
-            document.getElementById('inClient').value = val(currentItem['CLIENT']) !== '-' ? currentItem['CLIENT'] : '';
-            document.getElementById('inTempat').value = val(currentItem['TEMPAT']) !== '-' ? currentItem['TEMPAT'] : '';
-            document.getElementById('inSample').value = val(currentItem['SAMPLE NO']) !== '-' ? currentItem['SAMPLE NO'] : '';
-            document.getElementById('inSize').value = val(currentItem['SIZE']) !== '-' ? currentItem['SIZE'] : '';
-            document.getElementById('inQty').value = val(currentItem['QTY']) !== '-' ? currentItem['QTY'] : '';
-            document.getElementById('inUnit').value = val(currentItem['UNIT']) !== '-' ? currentItem['UNIT'] : 'PCS';
-            if(currentItem['DATE'] && currentItem['DATE'] !== '-') {
-                const d = new Date(currentItem['DATE']);
-                document.getElementById('inDate').value = d.toISOString().split('T')[0];
+            closeDetailModal();
+            
+            document.getElementById('formTitle').textContent = 'Edit Detail Barang';
+            document.getElementById('editRowIndex').value = currentItem.originalIndex;
+            document.getElementById('inStyle').value = currentItem.STYLE || '';
+            document.getElementById('inClient').value = currentItem.CLIENT || '';
+            document.getElementById('inTempat').value = currentItem.TEMPAT || '';
+            document.getElementById('inSample').value = currentItem['SAMPLE NO'] || '';
+            document.getElementById('inSize').value = currentItem.SIZE || '';
+            document.getElementById('inQty').value = currentItem.QTY || '';
+            document.getElementById('inUnit').value = currentItem.UNIT || 'PCS';
+            
+            if (currentItem.DATE) {
+                const date = new Date(currentItem.DATE);
+                document.getElementById('inDate').valueAsDate = date;
             }
-            document.getElementById('modalFormOverlay').classList.remove('hidden');
+            
+            document.getElementById('modalForm').classList.remove('hidden');
         }
 
-        function closeFormModal() { document.getElementById('modalFormOverlay').classList.add('hidden'); }
+        function closeFormModal() {
+            document.getElementById('modalForm').classList.add('hidden');
+        }
 
         async function submitItemForm(e) {
             e.preventDefault();
+            
             const editIndex = document.getElementById('editRowIndex').value;
-            const isEdit = editIndex !== "";
+            const isEdit = editIndex !== '';
             const action = isEdit ? 'editItem' : 'addItem';
+            
             const btn = document.getElementById('btnFormSubmit');
-            btn.innerHTML = 'Memproses...'; btn.disabled = true;
-
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Menyimpan...';
+            btn.disabled = true;
+            
             const payload = {
                 action: action,
                 rowIndex: editIndex,
@@ -725,23 +787,50 @@
                 qty: document.getElementById('inQty').value,
                 unit: document.getElementById('inUnit').value
             };
-
+            
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
+                
                 closeFormModal();
-                Swal.fire('Sukses', isEdit ? 'Data berhasil diperbarui' : 'Barang berhasil ditambahkan', 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: isEdit ? 'Data Berhasil Diperbarui' : 'Barang Berhasil Ditambahkan',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
                 fetchData();
             } catch (error) {
                 console.error(error);
                 Swal.fire('Error', 'Gagal menyimpan data', 'error');
             } finally {
-                btn.innerHTML = 'Simpan Data'; btn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
+        }
+
+        // === UTILITY FUNCTIONS ===
+        function formatDate(dateString) {
+            if (!dateString || dateString === '-') return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('itemsContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').classList.add('hidden');
         }
     </script>
 </body>
 </html>
-
